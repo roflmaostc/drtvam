@@ -1,0 +1,23 @@
+__pycache__
+data/*
+*.exr
+*.npz
+*.npy
+*.png
+*.vol
+output*/
+.ipynb_checkpoints/
+
+# Apptainer images
+*.sif
+
+# Slurm output files
+*.out
+
+# Python package info
+*.egg-info/
+build/
+
+# Documentation build
+docs/build/
+
