@@ -1,7 +1,7 @@
 import pytest
 import mitsuba as mi
 import drjit as dr
-import drtvam.plugins
+import drtvam
 
 @pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])
 def test_crop(variant):

@@ -10,7 +10,6 @@ import drtvam
 from drtvam.loss import *
 from drtvam.optimize import *
 from drtvam.utils import discretize
-import drtvam.plugins
 import matplotlib.pyplot as plt
 
 
