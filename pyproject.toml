@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "drtvam"
+version = "0.1.0"
+authors = [
+  { name="Baptiste Nicolet", email="baptiste.nicolet@epfl.ch" },
+  { name="Felix Wechsler", email="felix.wechsler@epfl.ch" },
+]
+description = "An inverse rendering framework for tomographic volumetric additive manufacturing"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "mitsuba>=3.6.0",
+    "numpy",
+    "tqdm",
+    "matplotlib"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/rgl-epfl/drtvam"
+Issues = "https://github.com/rgl-epfl/drtvam/issues"
+
+[project.scripts]
+drtvam = "drtvam.optimize:main"
+
+#[tool.pytest.ini_options]
+#pythonpath = [
+#  "."
+#]
