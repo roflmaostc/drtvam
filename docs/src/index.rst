@@ -14,10 +14,13 @@ optimize projection patterns for it. It is implemented in Python on top of the
 It is possible to use Dr.TVAM to setup a wide variety of experiments. In
 particular, we support:
 
-* Printing in scattering media. * Printing with arbitrary container geometry, or
+* Printing in scattering media. 
+* Printing with arbitrary container geometry, or
   occluding objects (e.g. overprinting), with correct handling of the light
-  transport. * Printing with a variety of projection models, and an arbitrary
-  container motion. * Optimizing patterns for TVAM with our surface-aware
+  transport. 
+* Printing with a variety of projection models, and an arbitrary
+  container motion. 
+* Optimizing patterns for TVAM with our surface-aware
   discretization.
 
 Installation
