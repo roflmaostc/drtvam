@@ -82,6 +82,12 @@ The full documentation for this project, along with jupyter notebooks
 explaining the basics of implementing your own optimizations in our framework,
 can be found on [readthedocs](https://drtvam.readthedocs.io/en/latest/).
 
+## Teaser video
+Can be found on YouTube:
+
+<a  href="https://www.youtube.com/watch?v=w6weg4noMIY"><img src="docs/src/resources/video_teaser.png"  width="400"></a>
+
+
 ## License
 
 This project is provided under a non-commercial license. Please refer to the LICENSE file for details.
