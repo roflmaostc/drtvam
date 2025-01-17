@@ -38,6 +38,7 @@
 <br />
 <br />
 
+
 ## About this project
 
 Dr.TVAM is an inverse rendering framework for tomographic volumetric additive
@@ -48,6 +49,9 @@ differentiable rendering to optimize patterns for TVAM. In particular, it suppor
 - Arbitrary vial shapes
 - Arbitrary projector motions
 - An improved discretization scheme for the target shape
+
+## ⚠️ Sign up for online workshop in Spring 2025
+* The date is not announced yet, but sign up for the announcement: [here](https://forms.office.com/e/3E0SeYUR1X?origin=lprLink)
 
 ## Installation
 
