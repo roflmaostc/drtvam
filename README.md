@@ -35,6 +35,10 @@
   </p>
 </p>
 
+<p align="center">
+  <img src='https://rgl-ci.epfl.ch/app/rest/builds/buildType(id:DrTVAM_LinuxAmd64gcc9)/statusIcon.svg'>
+</p>
+
 <br />
 <br />
 
