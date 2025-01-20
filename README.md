@@ -36,7 +36,9 @@
 </p>
 
 <p align="center">
-  <img src='https://rgl-ci.epfl.ch/app/rest/builds/buildType(id:DrTVAM_LinuxAmd64gcc9)/statusIcon.svg'>
+  <a href='https://rgl-ci.epfl.ch/viewType.html?buildTypeId=DrTVAM_LinuxAmd64gcc9&guest=1'>
+    <img src='https://rgl-ci.epfl.ch/app/rest/builds/buildType(id:DrTVAM_LinuxAmd64gcc9)/statusIcon.svg'>
+  </a>
 </p>
 
 <br />
