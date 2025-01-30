@@ -33,16 +33,18 @@ class Loss:
 
         if target.shape[-1] == 1: # binary or grayscale target
             loss = self.eval(x, target)
+            loss_patterns = self.eval(x, target)
         elif target.shape[-1] == 2: # Surface-aware discretization
             # Here, the target defines the fractional inside/outside volumes of individual voxels.
             w_in = target[..., 0] / (target[..., 0] + target[..., 1])
             w_out = target[..., 1] / (target[..., 0] + target[..., 1])
 
             loss = w_in * self.eval_in(x[..., 0]) + w_out * self.eval_out(x[..., 1])
+            loss_patterns = self.eval(x, target)
         else:
             raise ValueError(f"[Loss] Received tensors of invalid shape: {target.shape}. The last dimension should be either 1 or 2.")
 
-        return self.reduction(loss, axis=None)
+        return self.reduction(loss, axis=None) + self.reduction(loss_patterns, axis=None)
 
 #TODO: implement L1 in an example in the documentation
 class L2Loss(Loss):
@@ -61,7 +63,7 @@ class ThresholdedLoss(Loss):
     Thresholded loss following Wechsler et al 2024.
 
     The loss is defined as:
-    L(x) = weight_object * relu(tu - x)^K + weight_void * relu(x - tl)^K + relu(x - 1)^K
+    L(x, patterns) = sum(weight_object * relu(tu - x)^K + weight_void * relu(x - tl)^K + relu(x - 1)^K) + sum(patterns^M)
 
     where:
     - x is the intensity distribution in the printing region
@@ -78,6 +80,9 @@ class ThresholdedLoss(Loss):
         # put a different weight for the object and void regions
         self.weight_object = props.get('weight_object', 1)
         self.weight_void = props.get('weight_void', 1)
+        # sparsity term to avoid bright pixels on the DMD
+        self.weight_sparsity = props.get('weight_sparsity', 0)
+        self.M = props.get('M', 2)
 
 
         if self.tl >= self.tu:
@@ -89,10 +94,17 @@ class ThresholdedLoss(Loss):
     def eval_out(self, x):
         return self.weight_void * relu(x - self.tl)**self.K
 
-    def eval(self, x, target):
-        # target should be a binary inside/outside mask
-        return dr.select(target > 0, self.eval_in(x), self.eval_out(x))
+    def sparsity_loss(self, patterns):
+        return patterns ** self.M
 
+    def eval(self, x, target, patterns):
+        # target should be a binary inside/outside mask
+        if self.weight_sparsity != 0:
+            return dr.select(target > 0, self.eval_in(x), self.eval_out(x)), self.sparsity_loss(patterns)
+        else:
+            return dr.select(target > 0, self.eval_in(x), self.eval_out(x)), 0
+
+            
 losses = {
     'l2': L2Loss,
     'threshold': ThresholdedLoss,
