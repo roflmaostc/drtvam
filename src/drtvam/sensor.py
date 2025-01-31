@@ -63,9 +63,9 @@ class VolumetricSensor(mi.Sensor):
 
         bbox = target_shape.bbox()
         # First channel is "outside" and second channel is "inside"
-        self.volumes = dr.ones(mi.TensorXf, shape=self.m_film.resolution())
-
         res = self.m_film.resolution()
+        self.volumes = dr.ones(mi.TensorXf, shape=self.m_film.data.shape)
+
         xx = dr.arange(mi.Float, res.x)
         yy = dr.arange(mi.Float, res.y)
         zz = dr.arange(mi.Float, res.z)

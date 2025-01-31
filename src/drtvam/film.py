@@ -10,6 +10,7 @@ class VolumetricFilm(mi.Film):
         resy = props.get('resx', 256)
         resx = props.get('resy', 256)
 
+        # Spatial resolution of the film
         self.res = mi.ScalarVector3i(resx, resy, resz)
 
         # Use surface-aware discretization ?
