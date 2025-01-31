@@ -76,6 +76,11 @@ def discretize(scene, sensor=0):
 
     bbox = target_shape.bbox()
 
+    target_scene = mi.load_dict({
+        'type': 'scene',
+        'target': target_shape,
+    })
+
     res = sensor.resolution()
     voxel_size = sensor.bbox.extents() / mi.Vector3f(res.x, res.y, res.z)
 
@@ -92,7 +97,7 @@ def discretize(scene, sensor=0):
     ray = mi.Ray3f(pos, mi.warp.square_to_uniform_sphere(sampler.next_2d()))
     active = dr.all((ray.o > bbox.min) & (ray.o < bbox.max))
 
-    si = scene.ray_intersect(ray, active=active)
+    si = target_scene.ray_intersect(ray, active=active)
 
     inside = si.is_valid() & (si.shape == mi.ShapePtr(target_shape)) & (dr.dot(si.n, ray.d) > 0)
 
