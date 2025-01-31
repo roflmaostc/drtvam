@@ -9,19 +9,21 @@ def iou_loss(pred, target, threshold=0.85):
     thresholded = pred.array > threshold
     return mi.Float(dr.count(thresholded & obj_mask)) / dr.count(thresholded | obj_mask)
 
-def reshape_grid(array, res):
+def reshape_grid(array):
     if len(array.shape) == 3:
         n, h, w = array.shape
         c = 1
-    else:
+    elif len(array.shape) == 4:
         n, h, w, c = array.shape
-    if np.log2(res) % 2 == 0:
-        cols = rows = int(np.sqrt(res))
     else:
-        rows = int(np.sqrt(res/2))
-        cols = rows * 2
+        raise ValueError(f"Invalid array shape: {array.shape}")
 
-    return array.numpy().reshape((rows, cols, h, w, c)).swapaxes(1, 2).reshape((rows*h, cols*w, c))
+    rows = int(np.ceil(np.sqrt(n)))
+    # Add padding to make the grid square
+    array_new = np.zeros((rows**2, h, w, c))
+    array_new[:n] = array
+
+    return array_new.reshape((rows, rows, h, w, c)).swapaxes(1, 2).reshape((rows*h, rows*w, c))
 
 def save_img(img, path):
     assert type(img) == mi.TensorXf
@@ -34,12 +36,12 @@ def save_img(img, path):
     bmp.write(path)
 
 def save_vol(vol, path):
-    assert type(vol) == mi.TensorXf
-    if len(vol.shape) == 3:
-        vol == vol[..., None]
-    assert len(vol.shape) == 4
+    if isinstance(vol, mi.TensorXf):
+        vol = vol.numpy()
+    elif not isinstance(vol, np.ndarray):
+        raise ValueError(f"Invalid volume type: '{type(vol)}'")
 
-    bmp = mi.Bitmap(mi.TensorXf(reshape_grid(vol, vol.shape[0])))
+    bmp = mi.Bitmap(mi.TensorXf(reshape_grid(vol)))
     bmp.write(path)
 
 def save_histogram(vol, target, filename):
