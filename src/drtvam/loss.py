@@ -20,10 +20,10 @@ class Loss:
     def eval_out(self, x):
         raise NotImplementedError
 
-    def eval(self, x, target):
+    def eval(self, x, target, patterns):
         raise NotImplementedError
 
-    def __call__(self, x, target):
+    def __call__(self, x, target, patterns):
         if x.shape != target.shape:
             if len(x.shape) == len(target.shape) + 1 and x.shape[-1] == 1:
                 # we expect the last dimension to have 1 or 2 channels
@@ -32,17 +32,21 @@ class Loss:
                 raise ValueError(f"Input and target shapes do not match: {x.shape} != {target.shape}")
 
         if target.shape[-1] == 1: # binary or grayscale target
-            loss = self.eval(x, target)
+            loss, loss_patterns = self.eval(x, target, patterns)
         elif target.shape[-1] == 2: # Surface-aware discretization
             # Here, the target defines the fractional inside/outside volumes of individual voxels.
             w_in = target[..., 0] / (target[..., 0] + target[..., 1])
             w_out = target[..., 1] / (target[..., 0] + target[..., 1])
 
             loss = w_in * self.eval_in(x[..., 0]) + w_out * self.eval_out(x[..., 1])
+            loss_patterns = self.eval_sparsity(patterns)
         else:
             raise ValueError(f"[Loss] Received tensors of invalid shape: {target.shape}. The last dimension should be either 1 or 2.")
 
-        return self.reduction(loss, axis=None)
+        # loss_patterns and loss are still arrays but with different shapes.
+        # Hence separate reduction
+        print("loss_patterns", self.reduction(loss_patterns, axis=None))
+        return self.reduction(loss, axis=None) + self.reduction(loss_patterns, axis=None)
 
 #TODO: implement L1 in an example in the documentation
 class L2Loss(Loss):
@@ -52,8 +56,8 @@ class L2Loss(Loss):
     def eval_out(self, x):
         return dr.square(x)
 
-    def eval(self, x, target):
-        return dr.square(x - target)
+    def eval(self, x, target, patterns):
+        return dr.square(x - target), 0 * patterns
 
 
 class ThresholdedLoss(Loss):
@@ -61,24 +65,28 @@ class ThresholdedLoss(Loss):
     Thresholded loss following Wechsler et al 2024.
 
     The loss is defined as:
-    L(x) = weight_object * relu(tu - x)^K + weight_void * relu(x - tl)^K + relu(x - 1)^K
+    L(x, patterns) = weight_object * relu(tu - x)^K + weight_void * relu(x - tl)^K + relu(x - 1)^K + patterns * weight_sparsity
 
     where:
     - x is the intensity distribution in the printing region
-    - tu is the upper threshold
-    - tl is the lower threshold
+    - tu is the upper threshold, by default 0.95
+    - tl is the lower threshold, by default 0.9
     - weight_object and weight_void are the weights for the object and void regions
-    - K is the exponent for the loss function
+    - K is the exponent for the loss function, by default 2
+    - M is the exponent for the sparsity term, by default 4
+    - weight_sparsity is the weight for the sparsity term, by default 0
     """
     def __init__(self, props):
         super().__init__(props)
         self.K = props.get('K', 2)
+        self.M = props.get('M', 4)
         self.tl = props.get('tl', 0.9)
         self.tu = props.get('tu', 0.95)
         # put a different weight for the object and void regions
         self.weight_object = props.get('weight_object', 1)
         self.weight_void = props.get('weight_void', 1)
-
+        # by default no sparsity
+        self.weight_sparsity = props.get('weight_sparsity', 0)
 
         if self.tl >= self.tu:
             raise ValueError(f"[ThresholdedLoss] Lower threshold ({self.tl}) must be smaller than upper threshold ({self.tu})")
@@ -89,9 +97,13 @@ class ThresholdedLoss(Loss):
     def eval_out(self, x):
         return self.weight_void * relu(x - self.tl)**self.K
 
-    def eval(self, x, target):
+    def eval_sparsity(self, patterns):
+        return patterns**self.M * self.weight_sparsity
+
+    def eval(self, x, target, patterns):
         # target should be a binary inside/outside mask
-        return dr.select(target > 0, self.eval_in(x), self.eval_out(x))
+        return dr.select(target > 0, self.eval_in(x), self.eval_out(x)),\
+                self.eval_sparsity(patterns)
 
 losses = {
     'l2': L2Loss,
