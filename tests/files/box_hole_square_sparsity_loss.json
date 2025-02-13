@@ -1,0 +1,53 @@
+{
+    "vial": {
+        "type": "square",
+        "w_int": 10.191,
+        "w_ext": 12.408,
+        "ior": 1.54,
+        "medium": {
+            "ior": 1.347,
+            "phase": {
+                "type": "rayleigh"
+            },
+            "extinction": 0.03,
+            "albedo": 0.0
+        }
+    },
+    "projector": {
+        "type": "collimated",
+        "n_patterns": 200,
+        "resx": 200,
+        "resy": 20,
+        "pixel_size": 50e-3,
+        "motion": "circular",
+        "distance": 20
+    },
+    "sensor": {
+        "type": "dda",
+        "scalex": 5,
+        "scaley": 5,
+        "scalez": 1.25,
+        "film": {
+            "type": "vfilm",
+            "resx": 100,
+            "resy": 100,
+            "resz": 50
+        }
+    },
+    "target": {
+        "filename": "tests/files/box_hole.ply",
+        "size": 4.0
+    },
+    "loss": {
+        "type": "threshold",
+        "tl": 0.80,
+        "tu": 0.95,
+        "weight_sparsity": 0.00,
+        "M": 4
+    },
+    "progressive": true,
+    "n_steps": 20,
+    "spp": 10,
+    "spp_ref": 10,
+    "spp_grad": 10
+}
