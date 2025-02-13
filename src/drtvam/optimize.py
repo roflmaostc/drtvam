@@ -153,8 +153,8 @@ def optimize(config):
             vol = mi.render(scene, params, integrator=integrator, spp=spp, spp_grad=spp_grad, seed=i)
             return vol
 
-        def loss_fn2(y):
-            return loss_fn(y, target)
+        def loss_fn2(y, patterns):
+            return loss_fn(y, target, patterns)
 
         opt = LinearLBFGS(loss_fn=loss_fn2, render_fn=render_fn)
 
@@ -176,7 +176,8 @@ def optimize(config):
             vol = mi.render(scene, params, integrator=integrator, spp=spp, spp_grad=spp_grad, seed=i)
             dr.schedule(vol)
 
-            loss = loss_fn(vol, target)
+            print("calling loss from optimize")
+            loss = loss_fn(vol, target, params['projector.active_data'])
             dr.eval(loss)
             loss_hist[i] = loss.numpy()
 
@@ -249,8 +250,11 @@ def optimize(config):
     final_array = scaled_array.astype(np.uint8)
     np.savez_compressed(os.path.join(output, "patterns_normalized_uint8.npz"), patterns=final_array)
 
+    efficiency = np.sum(normalized_array / normalized_array.size)
+    print("Pattern efficiency {:.4f}".format(efficiency))
 
-    save_histogram(vol_final, target, os.path.join(output, "histogram.png"))
+    best_threshold = (config.get('loss', {}).get('tu', 0.9) +  config.get('loss', {}).get('tl', 0.9)) / 2
+    save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency, best_threshold)
 
     return vol_final
 

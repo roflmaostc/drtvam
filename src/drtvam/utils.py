@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-def iou_loss(pred, target, threshold=0.85):
+def iou_loss(pred, target, threshold=0.9):
     obj_mask = target.array > 0.
     thresholded = pred.array > threshold
     return mi.Float(dr.count(thresholded & obj_mask)) / dr.count(thresholded | obj_mask)
@@ -42,7 +42,7 @@ def save_vol(vol, path):
     bmp = mi.Bitmap(mi.TensorXf(reshape_grid(vol, vol.shape[0])))
     bmp.write(path)
 
-def save_histogram(vol, target, filename):
+def save_histogram(vol, target, filename, efficiency, best_threshold):
     fig = plt.figure(figsize=(10, 5))
     obj_mask = target.numpy().flatten() > 0.
 
@@ -51,6 +51,10 @@ def save_histogram(vol, target, filename):
     plt.hist(voxels_final[obj_mask], bins=500, label="Object", alpha=0.55)
     plt.hist(voxels_final[~obj_mask], bins=500, label="Empty", alpha=0.55)
 
+    iou = iou_loss(vol, target, best_threshold)
+    print("IoU", iou[0])
+
+    plt.title("pattern energy efficiency={:.4f}, IoU={:.4f}".format(efficiency, iou[0]))
     plt.yscale('log')
     plt.ylabel("# Voxels")
     plt.xlabel("Received dose")
