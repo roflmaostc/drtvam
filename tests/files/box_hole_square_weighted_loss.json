@@ -42,8 +42,8 @@
         "type": "threshold",
         "tl": 0.85,
         "tu": 0.95,
-        "weight_object": 0.5,
-        "weight_void": 10
+        "weight_object": 1,
+        "weight_void": 3
     },
     "progressive": true,
     "n_steps": 30
