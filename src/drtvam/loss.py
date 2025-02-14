@@ -58,6 +58,12 @@ class Loss:
 
 # TODO: implement L1 in an example in the documentation
 class L2Loss(Loss):
+    def __init__(self, props):
+        super().__init__(props)
+        self.M = props.get('M', 4)
+        # by default no sparsity
+        self.weight_sparsity = props.get('weight_sparsity', 0)
+
     def eval_in(self, x):
         return dr.square(x - 1.)
 
@@ -67,6 +73,8 @@ class L2Loss(Loss):
     def eval(self, x, target, patterns):
         return dr.square(x - target), 0 * patterns
 
+    def eval_sparsity(self, patterns):
+        return patterns**self.M * self.weight_sparsity
 
 class ThresholdedLoss(Loss):
     """
