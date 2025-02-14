@@ -1,8 +1,9 @@
-import mitsuba as mi
 import drjit as dr
+
 
 def relu(x):
     return dr.select(x > 0, x, 0)
+
 
 class Loss:
     def __init__(self, props):
@@ -29,26 +30,33 @@ class Loss:
                 # we expect the last dimension to have 1 or 2 channels
                 target = target[..., None]
             else:
-                raise ValueError(f"Input and target shapes do not match: {x.shape} != {target.shape}")
+                raise ValueError(f"Input and target shapes do not match: \
+                                 {x.shape} != {target.shape}")
 
-        if target.shape[-1] == 1: # binary or grayscale target
+        if target.shape[-1] == 1:  # binary or grayscale target
             loss, loss_patterns = self.eval(x, target, patterns)
-        elif target.shape[-1] == 2: # Surface-aware discretization
-            # Here, the target defines the fractional inside/outside volumes of individual voxels.
+        elif target.shape[-1] == 2:  # Surface-aware discretization
+            # Here, the target defines the fractional inside/outside
+            # volumes of individual voxels.
             w_in = target[..., 0] / (target[..., 0] + target[..., 1])
             w_out = target[..., 1] / (target[..., 0] + target[..., 1])
 
-            loss = w_in * self.eval_in(x[..., 0]) + w_out * self.eval_out(x[..., 1])
+            loss = w_in * self.eval_in(x[..., 0]) +\
+                w_out * self.eval_out(x[..., 1])
             loss_patterns = self.eval_sparsity(patterns)
         else:
-            raise ValueError(f"[Loss] Received tensors of invalid shape: {target.shape}. The last dimension should be either 1 or 2.")
+            raise ValueError(f"[Loss] Received tensors of invalid shape: \
+                             {target.shape}. The last dimension should be\
+                             either 1 or 2.")
 
         # loss_patterns and loss are still arrays but with different shapes.
         # Hence separate reduction
         print("loss_patterns", self.reduction(loss_patterns, axis=None))
-        return self.reduction(loss, axis=None) + self.reduction(loss_patterns, axis=None)
+        return self.reduction(loss, axis=None) +\
+            self.reduction(loss_patterns, axis=None)
 
-#TODO: implement L1 in an example in the documentation
+
+# TODO: implement L1 in an example in the documentation
 class L2Loss(Loss):
     def eval_in(self, x):
         return dr.square(x - 1.)
@@ -65,13 +73,17 @@ class ThresholdedLoss(Loss):
     Thresholded loss following Wechsler et al 2024.
 
     The loss is defined as:
-    L(x, patterns) = weight_object * relu(tu - x)^K + weight_void * relu(x - tl)^K + relu(x - 1)^K + patterns * weight_sparsity
+    L(x, patterns) = weight_object * relu(tu - x)^K +
+                     weight_void * relu(x - tl)^K +
+                     weight_limit * relu(x - 1)^K +
+                     patterns * weight_sparsity
 
     where:
     - x is the intensity distribution in the printing region
     - tu is the upper threshold, by default 0.95
     - tl is the lower threshold, by default 0.9
-    - weight_object and weight_void are the weights for the object and void regions
+    - weight_object and weight_void are the weights for the object/void regions
+    - weight_limit is the limit for the overpolymerization term
     - K is the exponent for the loss function, by default 2
     - M is the exponent for the sparsity term, by default 4
     - weight_sparsity is the weight for the sparsity term, by default 0
@@ -85,14 +97,17 @@ class ThresholdedLoss(Loss):
         # put a different weight for the object and void regions
         self.weight_object = props.get('weight_object', 1)
         self.weight_void = props.get('weight_void', 1)
+        self.weight_limit = props.get('weight_limit', 1)
         # by default no sparsity
         self.weight_sparsity = props.get('weight_sparsity', 0)
 
         if self.tl >= self.tu:
-            raise ValueError(f"[ThresholdedLoss] Lower threshold ({self.tl}) must be smaller than upper threshold ({self.tu})")
+            raise ValueError(f"[ThresholdedLoss] Lower threshold ({self.tl})\
+                             must be smaller than upper threshold ({self.tu})")
 
     def eval_in(self, x):
-        return self.weight_object * relu(self.tu - x)**self.K + relu(x - 1.)**self.K
+        return self.weight_object * relu(self.tu - x)**self.K +\
+            self.weight_limit * relu(x - 1.)**self.K
 
     def eval_out(self, x):
         return self.weight_void * relu(x - self.tl)**self.K
@@ -105,8 +120,8 @@ class ThresholdedLoss(Loss):
         return dr.select(target > 0, self.eval_in(x), self.eval_out(x)),\
                 self.eval_sparsity(patterns)
 
+
 losses = {
     'l2': L2Loss,
     'threshold': ThresholdedLoss,
 }
-

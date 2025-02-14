@@ -54,6 +54,7 @@ def save_histogram(vol, target, filename, efficiency, best_threshold):
     iou = iou_loss(vol, target, best_threshold)
     print("IoU", iou[0])
 
+    plt.xlim([0, 1.2])
     plt.title("pattern energy efficiency={:.4f}, IoU={:.4f}".format(efficiency, iou[0]))
     plt.yscale('log')
     plt.ylabel("# Voxels")
