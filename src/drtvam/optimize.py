@@ -260,15 +260,13 @@ def optimize(config):
         target = discretize(scene, sensor=final_sensor)
         np.save(os.path.join(output, "target_binary.npy"), target.numpy())
         save_vol(target, os.path.join(output, "target_binary.exr"))
-                
+
     efficiency = np.sum(normalized_array / normalized_array.size)
     print("Pattern efficiency {:.4f}".format(efficiency))
 
     best_threshold = (config.get('loss', {}).get('tu', 0.9) +  config.get('loss', {}).get('tl', 0.9)) / 2
     save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency, best_threshold)
 
-
-    save_histogram(vol_final, target, os.path.join(output, "histogram.png"))
 
     return vol_final
 
