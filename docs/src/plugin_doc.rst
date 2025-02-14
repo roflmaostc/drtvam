@@ -1,6 +1,6 @@
 .. _plugin_doc:
 
-Plugin documentation
+Documentation
 ====================
 
 Dr.TVAM extends the Mitsuba 3 framework with a few *plugins* that are specific
