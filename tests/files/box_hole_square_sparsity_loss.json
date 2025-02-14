@@ -42,7 +42,7 @@
         "type": "threshold",
         "tl": 0.80,
         "tu": 0.95,
-        "weight_sparsity": 0.00,
+        "weight_sparsity": 0.1,
         "M": 4
     },
     "progressive": true,
