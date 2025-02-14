@@ -1,6 +1,5 @@
 import pytest
 import drtvam
-from drtvam.utils import reshape_grid
 import mitsuba as mi
 import drjit as dr
 

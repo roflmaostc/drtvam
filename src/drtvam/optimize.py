@@ -12,7 +12,6 @@ from drtvam.utils import save_img, save_vol, save_histogram, discretize
 from drtvam.loss import losses
 from drtvam.lbfgs import LinearLBFGS
 
-
 def load_scene(config):
     for key in ['target', 'vial', 'projector', 'sensor']:
         if key not in config:
@@ -41,11 +40,13 @@ def load_scene(config):
     # Scale and center the target object
     target_to_world = mi.ScalarTransform4f().scale(size / dr.max(bbox.extents())) @ mi.ScalarTransform4f().translate(-c)
 
-    # Sensor transform
-    sensor_scalex = config['sensor'].pop('scalex', 1.)
-    sensor_scaley = config['sensor'].pop('scaley', 1.)
-    sensor_scalez = config['sensor'].pop('scalez', 1.)
-    sensor_to_world = mi.ScalarTransform4f().scale(mi.ScalarPoint3f(sensor_scalex, sensor_scaley, sensor_scalez))
+    def get_sensor_transform(sensor_dict):
+        sensor_scalex = sensor_dict.pop('scalex', 1.)
+        sensor_scaley = sensor_dict.pop('scaley', 1.)
+        sensor_scalez = sensor_dict.pop('scalez', 1.)
+        return mi.ScalarTransform4f().scale(mi.ScalarPoint3f(sensor_scalex, sensor_scaley, sensor_scalez))
+
+    sensor_to_world = get_sensor_transform(config['sensor'])
 
     # Create Mitsuba scene
     scene_dict = {
@@ -61,6 +62,10 @@ def load_scene(config):
             }
         },
     } | vial.to_dict()
+
+    if 'final_sensor' in config.keys():
+        final_sensor_to_world = get_sensor_transform(config['final_sensor'])
+        scene_dict['final_sensor'] = config['final_sensor'] | {'to_world': final_sensor_to_world}
 
     return scene_dict
 
@@ -79,7 +84,20 @@ def optimize(config):
     rr_depth = config.get('rr_depth', 6) # i.e. disabled by default
     time = config.get('time', 1.) # Print duration in seconds
     progressive = config.get('progressive', False)
-    surface_aware = config.get('surface_aware', False)
+    sensor = None
+    final_sensor = None
+    for s in scene.sensors():
+        if s.id() == 'sensor':
+            sensor = s
+        elif s.id() == 'final_sensor':
+            final_sensor = s
+
+    if final_sensor is None:
+        final_sensor = sensor
+    if final_sensor.film().surface_aware:
+        raise ValueError("The final sensor is used to generate visualizations and metrics of the final simulated print. Therefore, it must not be surface-aware. If you are using the surface-aware discretization for optimization, please specify another sensor called 'final_sensor' in the configuration file.")
+
+    surface_aware = sensor.film().surface_aware
     filter_radon = config.get('filter_radon', False) # Disable DMD pixels where the Radon transform is zero
 
     integrator = mi.load_dict({
@@ -91,12 +109,11 @@ def optimize(config):
 
     # Computing reference
     if surface_aware:
-        target = scene.sensors()[0].compute_volume(scene)
+        target = sensor.compute_volume(scene)
     else:
-        target = discretize(scene)
-
-    np.save(os.path.join(output, "target.npy"), target.numpy())
-    save_vol(target, os.path.join(output, "target.exr"))
+        target = discretize(scene, sensor=sensor)
+        np.save(os.path.join(output, "target.npy"), target.numpy())
+        save_vol(target, os.path.join(output, "target.exr"))
 
     patterns_key = 'projector.active_data'
 
@@ -150,7 +167,7 @@ def optimize(config):
         def render_fn(vars):
             params[patterns_key] = vars[patterns_key]
             params.update()
-            vol = mi.render(scene, params, integrator=integrator, spp=spp, spp_grad=spp_grad, seed=i)
+            vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
             return vol
 
         def loss_fn2(y, patterns):
@@ -173,7 +190,7 @@ def optimize(config):
         with dr.scoped_set_flag(dr.JitFlag.KernelHistory, True):
             params.update(opt)
 
-            vol = mi.render(scene, params, integrator=integrator, spp=spp, spp_grad=spp_grad, seed=i)
+            vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
             dr.schedule(vol)
 
             print("calling loss from optimize")
@@ -201,13 +218,6 @@ def optimize(config):
             # Adjoint timing
             timing_hist[i, 1] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
 
-    if scene_dict['sensor']['type'] != 'dda':
-        sensor_dict = scene_dict['sensor'].copy()
-        sensor_dict['type'] = 'dda'
-        sensor_final = mi.load_dict(sensor_dict)
-    else:
-        sensor_final = scene.sensors()[0]
-
     integrator_final = mi.load_dict({
         'type': 'volume',
         'max_depth': 16,
@@ -217,13 +227,7 @@ def optimize(config):
 
     print("Rendering final state...")
     params.update(opt)
-    vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=sensor_final)
-
-    if surface_aware:
-        np.save(os.path.join(output, "final_in.npy"), vol_final[..., 0].numpy())
-        np.save(os.path.join(output, "final_out.npy"), vol_final[..., 1].numpy())
-        volume = sensor_final.compute_volume(scene)
-        vol_final = (volume[..., 0] * vol_final[..., 0] + volume[..., 1] * vol_final[..., 1]) / (volume[..., 0] + volume[..., 1])
+    vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
     save_vol(vol_final, os.path.join(output, "final.exr"))
@@ -250,11 +254,21 @@ def optimize(config):
     final_array = scaled_array.astype(np.uint8)
     np.savez_compressed(os.path.join(output, "patterns_normalized_uint8.npz"), patterns=final_array)
 
+    # save a high resolution in case of surface aware since the resolution
+    # might be low of target.exr/npy
+    if surface_aware:
+        target = discretize(scene, sensor=final_sensor)
+        np.save(os.path.join(output, "target_binary.npy"), target.numpy())
+        save_vol(target, os.path.join(output, "target_binary.exr"))
+                
     efficiency = np.sum(normalized_array / normalized_array.size)
     print("Pattern efficiency {:.4f}".format(efficiency))
 
     best_threshold = (config.get('loss', {}).get('tu', 0.9) +  config.get('loss', {}).get('tl', 0.9)) / 2
     save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency, best_threshold)
+
+
+    save_histogram(vol_final, target, os.path.join(output, "histogram.png"))
 
     return vol_final
 

@@ -35,8 +35,15 @@
   </p>
 </p>
 
+<p align="center">
+  <a href='https://rgl-ci.epfl.ch/viewType.html?buildTypeId=DrTVAM_LinuxAmd64gcc9&guest=1'>
+    <img src='https://rgl-ci.epfl.ch/app/rest/builds/buildType(id:DrTVAM_LinuxAmd64gcc9)/statusIcon.svg'>
+  </a>
+</p>
+
 <br />
 <br />
+
 
 ## About this project
 
@@ -48,6 +55,9 @@ differentiable rendering to optimize patterns for TVAM. In particular, it suppor
 - Arbitrary vial shapes
 - Arbitrary projector motions
 - An improved discretization scheme for the target shape
+
+## ⚠️ Sign up for online workshop in Spring 2025
+* The date is not announced yet, but sign up for the announcement: [here](https://forms.office.com/e/3E0SeYUR1X?origin=lprLink)
 
 ## Installation
 
@@ -77,6 +87,12 @@ custom TVAM setups. We show examples in the documentation to get you started.
 The full documentation for this project, along with jupyter notebooks
 explaining the basics of implementing your own optimizations in our framework,
 can be found on [readthedocs](https://drtvam.readthedocs.io/en/latest/).
+
+## Teaser video
+Can be found on YouTube:
+
+<a  href="https://www.youtube.com/watch?v=w6weg4noMIY"><img src="docs/src/resources/video_teaser.png"  width="400"></a>
+
 
 ## License
 
