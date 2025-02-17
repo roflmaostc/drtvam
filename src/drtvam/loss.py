@@ -121,7 +121,7 @@ class ThresholdedLoss(Loss):
         return self.weight_void * relu(x - self.tl)**self.K
 
     def eval_sparsity(self, patterns):
-        return patterns**self.M * self.weight_sparsity
+        return dr.abs(patterns)**self.M * self.weight_sparsity
 
     def eval(self, x, target, patterns):
         # target should be a binary inside/outside mask
