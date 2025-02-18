@@ -50,8 +50,8 @@ class Loss:
                              {target.shape}. The last dimension should be\
                              either 1 or 2.")
 
-        mi.Log(mi.LogLevel.Debug, "loss_patterns {:.6f}".format(\
-               self.reduction(loss_patterns, axis=None)[0]))
+        mi.Log(mi.LogLevel.Debug, "loss_patterns {}".format(\
+               self.reduction(loss_patterns, axis=None)))
 
         # loss_patterns and loss are still arrays but with different shapes.
         # Hence separate reduction
