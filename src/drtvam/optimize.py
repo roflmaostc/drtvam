@@ -193,7 +193,7 @@ def optimize(config):
             vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
             dr.schedule(vol)
 
-            print("calling loss from optimize")
+            mi.Log(mi.LogLevel.Debug, "[drtvam] Calling loss from optimize loop")
             loss = loss_fn(vol, target, params['projector.active_data'])
             dr.eval(loss)
 

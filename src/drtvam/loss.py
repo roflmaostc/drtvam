@@ -1,4 +1,5 @@
 import drjit as dr
+import mitsuba as mi
 
 
 def relu(x):
@@ -49,9 +50,11 @@ class Loss:
                              {target.shape}. The last dimension should be\
                              either 1 or 2.")
 
+        mi.Log(mi.LogLevel.Debug, "loss_patterns {:.6f}".format(\
+               self.reduction(loss_patterns, axis=None)[0]))
+
         # loss_patterns and loss are still arrays but with different shapes.
         # Hence separate reduction
-        print("loss_patterns", self.reduction(loss_patterns, axis=None))
         return self.reduction(loss, axis=None) +\
             self.reduction(loss_patterns, axis=None)
 
