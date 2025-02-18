@@ -47,14 +47,17 @@
 
 ## About this project
 
-Dr.TVAM is an inverse rendering framework for tomographic volumetric additive
-manufacturing. It is based on the Mitsuba renderer, and uses physically-based
+Dr.TVAM is a high-performance inverse rendering framework for tomographic volumetric additive
+manufacturing. It is based on the [Mitsuba renderer](https://www.mitsuba-renderer.org/), and uses physically-based
 differentiable rendering to optimize patterns for TVAM. In particular, it supports:
 
-- Scattering printing media
-- Arbitrary vial shapes
-- Arbitrary projector motions
-- An improved discretization scheme for the target shape
+- Printing in scattering media
+- Arbitrary vial shapes (round, square, ...)
+- Arbitrary projector motions (orthogonal, tilted)
+- An improved discretization scheme for the target shape to reduce computational load and to minimize discretization artifacts
+
+For more details we refer to this [publication](https://rgl.s3.eu-central-1.amazonaws.com/media/papers/Nicolet2024Inverse.pdf).
+
 
 ## ⚠️ Sign up for online workshop in Spring 2025
 * The date is not announced yet, but sign up for the announcement: [here](https://forms.office.com/e/3E0SeYUR1X?origin=lprLink)
@@ -74,8 +77,8 @@ We provide a convenience command-line tool `drtvam` to run simple optimizations.
 ```bash=
 drtvam path/to/config.json
 ```
-
 Please refer to the documentation for details on the configuration file format. 
+Dr.TVAM will run multi-threaded on your machine but will also use your CUDA GPU and your [RT cores](https://developer.nvidia.com/rtx/ray-tracing) if supported by your hardware. 
 
 ## Advanced Usage
 
@@ -93,6 +96,10 @@ Can be found on YouTube:
 
 <a  href="https://www.youtube.com/watch?v=w6weg4noMIY"><img src="docs/src/resources/video_teaser.png"  width="400"></a>
 
+
+## Issues or support needed
+In case you run into issues or you do need support, do not hesitate to [open an issue](https://github.com/rgl-epfl/drtvam/issues/new) such that we can help you using Dr. TVAM!
+As an academic user, this is completely free to use. Please reach out to us in case you need support!
 
 ## License
 
