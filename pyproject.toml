@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "drtvam"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   { name="Baptiste Nicolet", email="baptiste.nicolet@epfl.ch" },
-  { name="Felix Wechsler", email="felix.wechsler@epfl.ch" },
+  { name="Felix Wechsler", email="fxw+git@epfl.ch" },
 ]
 description = "An inverse rendering framework for tomographic volumetric additive manufacturing"
 readme = "README.md"
