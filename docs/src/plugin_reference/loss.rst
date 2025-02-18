@@ -11,7 +11,7 @@ method, which allows to call it as if it were a regular function:
 .. code-block:: python
 
     loss_fn = L2Loss({'reduction': 'sum'})
-    loss = loss_fn(y, target)
+    loss = loss_fn(y, target, patterns)
 
 As for other plugins, the loss parameters are passed as a dictionary to the
 constructor of the loss class.
