@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-def iou_loss(pred, target, threshold=0.85):
+def iou_loss(pred, target, threshold=0.9):
     obj_mask = target.array > 0.
     thresholded = pred.array > threshold
     return mi.Float(dr.count(thresholded & obj_mask)) / dr.count(thresholded | obj_mask)
@@ -44,7 +44,7 @@ def save_vol(vol, path):
     bmp = mi.Bitmap(mi.TensorXf(reshape_grid(vol)))
     bmp.write(path)
 
-def save_histogram(vol, target, filename):
+def save_histogram(vol, target, filename, efficiency):
     fig = plt.figure(figsize=(10, 5))
     obj_mask = target.numpy().flatten() > 0.
 
@@ -53,6 +53,17 @@ def save_histogram(vol, target, filename):
     plt.hist(voxels_final[obj_mask], bins=500, label="Object", alpha=0.55)
     plt.hist(voxels_final[~obj_mask], bins=500, label="Empty", alpha=0.55)
 
+    # test a range from 0 to 1.3
+    print("Finding threshold for best IoU ...")
+    thresholds = np.linspace(0, 1.3, 1000)
+    ious = [iou_loss(vol, target, t)[0] for t in thresholds]
+    iou = max(ious)
+    best_threshold = np.argmax(np.array(ious))
+    print("best IoU: {:.4f}".format(iou))
+    print("best threshold: {:4f}".format(thresholds[best_threshold]))
+
+    plt.xlim([0, 1.2])
+    plt.title("pattern energy efficiency = {:.4f}, IoU = {:.4f} at threshold = {:.3f}".format(efficiency, iou, thresholds[best_threshold]))
     plt.yscale('log')
     plt.ylabel("# Voxels")
     plt.xlabel("Received dose")

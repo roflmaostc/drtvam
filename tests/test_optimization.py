@@ -78,6 +78,7 @@ def test_square_hole_occlusion_optimization(variant):
                                    'tests/files/box_hole_cylindrical.json',\
                                    'tests/files/box_hole_square.json',\
                                    'tests/files/box_hole_square_different_thresholds.json',\
+                                   'tests/files/box_hole_square_weighted_loss.json',\
                                    'tests/files/box_hole_index_matched.json'\
                                    ])
 @pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])

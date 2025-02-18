@@ -256,7 +256,8 @@ class LinearLBFGS(mi.ad.Optimizer):
         for _ in range(self.search_it):
 
             vol_new = vol + alpha * dvol
-            f_new = self.loss_fn(vol_new)
+            mi.Log(mi.LogLevel.Debug, "[drtvam] Calling loss from LBFGS")
+            f_new = self.loss_fn(vol_new, params['projector.active_data'])
 
             armijo = (f_new <= loss + c1 * alpha * g_dot_z)
             if dr.all(armijo):

@@ -170,8 +170,8 @@ def optimize(config):
             vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
             return vol
 
-        def loss_fn2(y):
-            return loss_fn(y, target)
+        def loss_fn2(y, patterns):
+            return loss_fn(y, target, patterns)
 
         opt = LinearLBFGS(loss_fn=loss_fn2, render_fn=render_fn)
 
@@ -193,9 +193,13 @@ def optimize(config):
             vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
             dr.schedule(vol)
 
-            loss = loss_fn(vol, target)
+            mi.Log(mi.LogLevel.Debug, "[drtvam] Calling loss from optimize loop")
+            loss = loss_fn(vol, target, params['projector.active_data'])
             dr.eval(loss)
-            loss_hist[i] = loss.numpy()
+
+            # numpy conversion is necessary to store the loss value
+            # apparently in just loss.numpy() is deprecated since (Deprecated NumPy 1.25.)
+            loss_hist[i] = loss[0].numpy()
 
             # Primal timing
             timing_hist[i, 0] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
@@ -253,11 +257,17 @@ def optimize(config):
     final_array = scaled_array.astype(np.uint8)
     np.savez_compressed(os.path.join(output, "patterns_normalized_uint8.npz"), patterns=final_array)
 
+    # save a high resolution in case of surface aware since the resolution
+    # might be low of target.exr/npy
     if surface_aware:
         target = discretize(scene, sensor=final_sensor)
         np.save(os.path.join(output, "target_binary.npy"), target.numpy())
         save_vol(target, os.path.join(output, "target_binary.exr"))
-    save_histogram(vol_final, target, os.path.join(output, "histogram.png"))
+
+    efficiency = np.sum(normalized_array / normalized_array.size)
+    print("Pattern efficiency {:.4f}".format(efficiency))
+
+    save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency)
 
     return vol_final
 

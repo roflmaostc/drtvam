@@ -10,7 +10,7 @@ def test_l2():
 
     pred = mi.TensorXf([1,2,3,4], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert loss == 26
 
     dr.backward(loss)
@@ -21,7 +21,7 @@ def test_l2():
 
     pred = mi.TensorXf([1,2,3,4], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert loss == 6.5
 
     dr.backward(loss)
@@ -32,7 +32,7 @@ def test_l2():
     target = mi.TensorXf([0.2, 0.8, 0.5, 0.], shape=(2,2,1))
     pred = mi.TensorXf([1., 1., 1., 1.], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss,  0.8**2 + 0.2**2 + 0.5**2 + 1.)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([1.6, 0.4, 1., 2.]))
@@ -42,7 +42,7 @@ def test_l2():
     target = mi.TensorXf([0.2, 0.8], shape=(1,1,2))
     pred = mi.TensorXf([0.4, 0.3], shape=(1,1,2))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.2 * 0.6**2 + 0.8 * 0.3**2)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-2*0.2*0.6, 2*0.8*0.3]))
@@ -56,7 +56,7 @@ def test_thresholded(variant):
 
     pred = mi.TensorXf([0.5, 0.97, 0.92, 0.5], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.45**2 + 0.02**2)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-0.9, 0., 0.04, 0.]))
@@ -65,7 +65,7 @@ def test_thresholded(variant):
 
     pred = mi.TensorXf([0.5, 0.97, 0.92, 0.5], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, (0.45**2 + 0.02**2) / 4)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-0.225, 0., 0.01, 0.]))
@@ -74,7 +74,7 @@ def test_thresholded(variant):
 
     pred = mi.TensorXf([0.5, 1.1, 0.92, 0.5], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.57)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-1, 1., 1., 0.]))
@@ -83,7 +83,7 @@ def test_thresholded(variant):
 
     pred = mi.TensorXf([0.5, 0.97, 0.92, 0.5], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.45**2 + 0.52**2 + 0.1**2)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-0.9, 0., 1.04, 0.2]))
@@ -92,7 +92,7 @@ def test_thresholded(variant):
 
     pred = mi.TensorXf([0.5, 0.97, 0.92, 0.5], shape=(2,2,1))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.49**2 + 0.02**2 + 0.02**2)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-0.98, -0.04, 0.04, 0.]))
@@ -102,7 +102,7 @@ def test_thresholded(variant):
     target = mi.TensorXf([0.2, 0.8, 2, 2], shape=(2,1,2))
     pred = mi.TensorXf([0.2, 0.1, 0.96, 0.92], shape=(2,1,2))
     dr.enable_grad(pred)
-    loss = loss_fn(pred, target)
+    loss = loss_fn(pred, target, 0 * target)
     assert dr.allclose(loss, 0.2 * 0.75**2 + 0.5 * 0.02**2)
     dr.backward(loss)
     assert dr.allclose(pred.grad.array, mi.Float([-2*0.2*0.75, 0., 0., 2*0.5*0.02]))
