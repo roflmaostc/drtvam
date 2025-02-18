@@ -196,7 +196,10 @@ def optimize(config):
             print("calling loss from optimize")
             loss = loss_fn(vol, target, params['projector.active_data'])
             dr.eval(loss)
-            loss_hist[i] = loss.numpy()
+
+            # numpy conversion is necessary to store the loss value
+            # apparently in just loss.numpy() is deprecated since (Deprecated NumPy 1.25.)
+            loss_hist[i] = loss[0].numpy()
 
             # Primal timing
             timing_hist[i, 0] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
