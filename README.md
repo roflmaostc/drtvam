@@ -96,7 +96,6 @@ Can be found on YouTube:
 
 <a  href="https://www.youtube.com/watch?v=w6weg4noMIY"><img src="docs/src/resources/video_teaser.png"  width="400"></a>
 
-
 ## Issues or support needed
 In case you run into issues or you do need support, do not hesitate to [open an issue](https://github.com/rgl-epfl/drtvam/issues/new) such that we can help you using Dr. TVAM!
 As an academic user, this is completely free to use. Please reach out to us in case you need support!
