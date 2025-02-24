@@ -139,6 +139,30 @@ def optimize(config):
         dr.flush_malloc_cache()
         dr.sync_thread()
 
+
+    if 'filter_corner' in config:
+        corner_integrator = mi.load_dict({
+            'type': 'corner',
+            'regular_sampling': True,
+        } | config['filter_corner'])
+        corner = mi.render(scene, integrator=corner_integrator, spp=1)
+
+        active_pixels = dr.compress(corner.array > 0.) + dr.opaque(mi.UInt32, 0) # Hack to get the result of compress to only use its actual size
+        dr.eval(active_pixels)
+
+        if len(active_pixels) == 0:
+            raise ValueError("No active pixels found in the Radon transform.")
+
+        params['projector.active_pixels'] = active_pixels
+        params[patterns_key] = dr.zeros(mi.Float, dr.width(active_pixels))
+        params.update()
+
+        del corner, corner_integrator
+        dr.flush_malloc_cache()
+        dr.sync_thread()
+
+
+
     # If not using the surface-aware discretization, we don't need the target shape anymore, so we just move it far away
     if not surface_aware:
         params['target.vertex_positions'] += 1e5

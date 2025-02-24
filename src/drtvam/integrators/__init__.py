@@ -13,4 +13,7 @@ def integrator_variant_callback(old, new):
     from . import volume
     importlib.reload(volume)
 
+    from . import filter_corner
+    importlib.reload(filter_corner)
+
 mi.detail.add_variant_callback(integrator_variant_callback)
