@@ -13,6 +13,10 @@
             "albedo": 0.0
         }
     },
+    "filter_corner": {
+        "dist": 6.204,
+        "radius": 0.2
+    },
     "projector": {
         "type": "collimated",
         "n_patterns": 200,
