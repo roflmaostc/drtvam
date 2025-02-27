@@ -12,4 +12,4 @@ tutorials:
 
     tuts/01 - Rendering
     tuts/02 - Optimizing
-
+    real_world_example.rst 
