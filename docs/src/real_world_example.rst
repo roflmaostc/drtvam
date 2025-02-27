@@ -170,7 +170,7 @@ Here the valid JSON without comments:
             }
         },
         "target": {
-            "filename": "/home/felix/Documents/data/sparse_tests_benchy/benchy.ply",
+            "filename": "lol/lel/foo/benchy.ply",
             "size": 5.0
         },
         "loss": {
@@ -188,10 +188,28 @@ Here the valid JSON without comments:
     }
 
 
+Lauching the Optimization
+-------------------------
+Open your terminal and laucnh the optimization with the following command. Of course, adapt the path
+
+.. code-block:: bash
+
+    $ drtvam lol/lel/foo/config.json
+        No optimizer specified. Using L-BFGS.
+        Optimizing patterns...
+        100%|█████████████████████████████████| 30/30 [04:22<00:00,  8.75s/it]
+        Rendering final state...
+        Saving images...
+        100%|█████████████████████████████████| 300/300 [00:01<00:00, 273.60it/s]
+        Pattern efficiency 0.0359
+        Finding threshold for best IoU ...
+        best IoU: 1.0000
+        best threshold: 0.913514
+
+On a RTX 3060 this code runs for roughly 5min. GPUs with ray tracing cores and more VRAM allow for faster and larger simulations.
 
 Analysing Results
 -----------------
-On a RTX 3060 this code runs for roughly 4min. GPUs with ray tracing cores and more VRAM allow for faster and larger simulations.
 
 One standard check after the optimization is the histogram
 
