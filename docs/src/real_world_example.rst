@@ -15,7 +15,7 @@ With a refractometer we measure the refractive index :math:`n_\text{resin} = 1.4
 We pour the resin into a cup. The photoinitiator is mixed into IPA. This is shaken until the TPO is dissolved.
 The IPA with the TPO is mixed into the resin. It is mixed in a Kurabo Planetary Mixer for some minutes. 
 In total, we mix roughly :math:`30\mathrm{mg}` of TPO into :math:`40\mathrm{mL}` of the resin.
-With a spectrometer, we determine the absorbance at our printing wavelength :math:`405\mathrm{nm}` to be :math:`A=0.2347/1\mathrm{cm}`. That means, :math:`\mu = 2.302\cdot A \approx 0.5404\mathrm{cm}^{-1}`-
+With a spectrometer, we determine the absorbance at our printing wavelength :math:`405\mathrm{nm}` to be :math:`A=0.2347/1\mathrm{cm}`. That means, :math:`\mu = ln(10)\cdot A / 10 \approx 0.05404\mathrm{mm}^{-1}`-
 Technically there is also absorption of the resin itself which does not contribute to the absorption but we determined it to be :math:`A=1.92\mathrm{m^{-1}}`.
 So we neglect this effect and assume all absorbed light is contributing to the polymerization.
 
