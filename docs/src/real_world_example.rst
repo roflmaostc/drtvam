@@ -13,9 +13,9 @@ For the resin we use the commercial *Sartomer Arkema resin* which mainly consist
 As photo initiator we use TPO.
 With a refractometer we measure the refractive index :math:`n_\text{resin} = 1.4849`.
 We pour the resin into a cup. The photoinitiator is mixed into IPA. This is shaken until the TPO is dissolved.
-The ethanol with the TPO is mixed into the resin. It is mixed in a Kurabo Planetary Mixer for some minutes. 
+The IPA with the TPO is mixed into the resin. It is mixed in a Kurabo Planetary Mixer for some minutes. 
 In total, we mix roughly :math:`30\mathrm{mg}` of TPO into :math:`40\mathrm{mL}` of the resin.
-With a spectrometer, we determine the absorbance at our printing wavelength :math:`405\mathrm{nm}` to be :math:`A=0.2347/1\mathrm{cm}`. That means, :math:`\mu = 54.04\mathrm{m}^{-1}`-
+With a spectrometer, we determine the absorbance at our printing wavelength :math:`405\mathrm{nm}` to be :math:`A=0.2347/1\mathrm{cm}`. That means, :math:`\mu = ln(10)\cdot A / 10 \approx 0.05404\mathrm{mm}^{-1}`-
 Technically there is also absorption of the resin itself which does not contribute to the absorption but we determined it to be :math:`A=1.92\mathrm{m^{-1}}`.
 So we neglect this effect and assume all absorbed light is contributing to the polymerization.
 
@@ -61,12 +61,13 @@ We specify the optimization parameters with a JSON file. Below is an example of 
              "ior": 1.58,
              # describes the medium of the resin
              "medium": {
-                 "ior": 1.347,
+                 "ior": 1.4849,
                  # phase function in case of scattering
                  "phase": {
                      "type": "rayleigh"
                  },
-                 "extinction": 0.054,
+                 # we are using mm as units, so this is mm^-1
+                 "extinction": 0.054, 
                  # albedo indicates no scattering
                  "albedo": 0.0
              }
@@ -114,7 +115,7 @@ We specify the optimization parameters with a JSON file. Below is an example of 
              "type": "threshold",
              "tl": 0.88,
              "tu": 0.95,
-             # no sparsity enfored
+             # no sparsity enforced
              "weight_sparsity": 0.0,
              "M": 4
          },
@@ -139,7 +140,7 @@ Here the valid JSON without comments:
             "r_ext": 8.3,
             "ior": 1.58,
             "medium": {
-                "ior": 1.347,
+                "ior": 1.4849,
                 "phase": {
                     "type": "rayleigh"
                 },
