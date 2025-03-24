@@ -69,10 +69,13 @@ def load_scene(config):
 
     return scene_dict
 
-def optimize(config):
+def optimize(config, config_print=None):
     scene_dict = load_scene(config)
     scene = mi.load_dict(scene_dict)
     params = mi.traverse(scene)
+
+
+
 
     output = config['output']
 
@@ -256,6 +259,7 @@ def optimize(config):
         'print_time': time,
     })
 
+
     print("Rendering final state...")
     params.update(opt)
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
@@ -297,7 +301,147 @@ def optimize(config):
 
     save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency)
 
+
+
+    if config_print != None:
+        my_print(config_print, params, spp_ref, integrator_final,  surface_aware, target, imgs_final)
+
     return vol_final
+
+
+
+
+
+
+
+
+
+def my_print(config, params_old, spp_ref, integrator_final, surface_aware, target, imgs_final):
+    scene_dict = load_scene(config)
+    scene = mi.load_dict(scene_dict)
+    params = mi.traverse(scene)
+    output = config['output']
+
+    output = config['output']
+
+    # Rendering parameters
+    spp = config.get('spp', 4)
+    spp_ref = config.get('spp_ref', 16)
+    spp_grad = config.get('spp_grad', spp)
+    max_depth = config.get('max_depth', 6)
+    rr_depth = config.get('rr_depth', 6) # i.e. disabled by default
+    time = config.get('time', 1.) # Print duration in seconds
+    progressive = config.get('progressive', False)
+    transmission_only = config.get('transmission_only', True)
+    regular_sampling = config.get('regular_sampling', False)
+    sensor = None
+    final_sensor = None
+    for s in scene.sensors():
+        if s.id() == 'sensor':
+            sensor = s
+        elif s.id() == 'final_sensor':
+            final_sensor = s
+
+    if final_sensor is None:
+        final_sensor = sensor
+    if final_sensor.film().surface_aware:
+        raise ValueError("The final sensor is used to generate visualizations and metrics of the final simulated print. Therefore, it must not be surface-aware. If you are using the surface-aware discretization for optimization, please specify another sensor called 'final_sensor' in the configuration file.")
+
+
+    surface_aware = sensor.film().surface_aware
+    filter_radon = config.get('filter_radon', False) # Disable DMD pixels where the Radon transform is zero
+
+    patterns_key = 'projector.active_data'
+
+    if filter_radon:
+        # Deactivate pixels where the Radon transform is zero
+        radon_integrator = mi.load_dict({
+            'type': 'radon',
+            'max_depth': 3,
+        })
+        radon = mi.render(scene, integrator=radon_integrator, spp=4)
+
+        active_pixels = dr.compress(radon.array > 0.) + dr.opaque(mi.UInt32, 0) # Hack to get the result of compress to only use its actual size
+        dr.eval(active_pixels)
+
+        if len(active_pixels) == 0:
+            raise ValueError("No active pixels found in the Radon transform.")
+
+        params['projector.active_pixels'] = active_pixels
+        params[patterns_key] = dr.zeros(mi.Float, dr.width(active_pixels))
+        params.update()
+
+        del radon, radon_integrator
+        dr.flush_malloc_cache()
+        dr.sync_thread()
+
+
+    if 'filter_corner' in config:
+        corner_integrator = mi.load_dict({
+            'type': 'corner',
+            'regular_sampling': True,
+        } | config['filter_corner'])
+        corner = mi.render(scene, integrator=corner_integrator, spp=1)
+
+        active_pixels = dr.compress(corner.array > 0.) + dr.opaque(mi.UInt32, 0) # Hack to get the result of compress to only use its actual size
+        dr.eval(active_pixels)
+
+        if len(active_pixels) == 0:
+            raise ValueError("No active pixels found in the Radon transform.")
+
+        params['projector.active_pixels'] = active_pixels
+        params[patterns_key] = dr.zeros(mi.Float, dr.width(active_pixels))
+        params.update()
+
+        del corner, corner_integrator
+        dr.flush_malloc_cache()
+        dr.sync_thread()
+
+
+
+    # If not using the surface-aware discretization, we don't need the target shape anymore, so we just move it far away
+    if not surface_aware:
+        params['target.vertex_positions'] += 1e5
+        params.update()
+
+
+
+    params[patterns_key] = dr.detach(params_old[patterns_key])
+
+    vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
+
+    np.save(os.path.join(output, "final_print.npy"), vol_final.numpy())
+    save_vol(vol_final, os.path.join(output, "final_print.exr"))
+
+    imgs_final = scene.emitters()[0].patterns()
+    dr.eval(imgs_final)
+
+    # save also the compressed version normalized to [0, 255]
+    # Step 1: Normalize the array to [0, 1]
+    array = imgs_final.numpy()
+    array_max = np.max(array)
+    normalized_array = array / array_max
+    # Step 2: Scale to [0, 255]
+    scaled_array = normalized_array * 255
+    # Step 3: Convert to np.uint8
+    final_array = scaled_array.astype(np.uint8)
+
+    # save a high resolution in case of surface aware since the resolution
+    # might be low of target.exr/npy
+    if surface_aware:
+        target = discretize(scene, sensor=final_sensor)
+        np.save(os.path.join(output, "target_binary.npy"), target.numpy())
+        save_vol(target, os.path.join(output, "target_binary.exr"))
+
+    efficiency = np.sum(normalized_array / normalized_array.size)
+    print("Pattern efficiency {:.4f}".format(efficiency))
+
+    save_histogram(vol_final, target, os.path.join(output, "histogram_print.png"), efficiency)
+
+
+    return
+
+
 
 class OverrideAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
@@ -322,18 +466,26 @@ class OverrideAction(argparse.Action):
         self.overrides[key] = value
         setattr(namespace, self.dest, self.overrides)
 
+
+
 def main():
     parser = argparse.ArgumentParser("Optimize patterns for TVAM.")
-    parser.add_argument("config", type=str, help="Path to the configuration file")
+    parser.add_argument("config", type=str, help="Path to the configuration file for optimization")
+    parser.add_argument("config_print", type=str, nargs='?', help="Path to the configuration file for printing (optional)")
     parser.add_argument("-D", dest="overrides", metavar="key=value", action=OverrideAction, help="Override/Add a parameter in the configuration dictionary. Nested keys are separated by dots.")
     parser.add_argument("--backend", type=str, default="cuda", choices=["cuda", "llvm"], help="Select the backend for the optimization.")
+
     args = parser.parse_args()
 
+    # Set variant based on the backend
     mi.set_variant(f"{args.backend}_ad_mono")
 
     # Load the configuration file
     with open(args.config, 'r') as f:
         config = json.load(f)
+
+    with open(args.config_print, 'r') as f:
+        config_print = json.load(f)
 
     # Apply overrides
     if args.overrides is not None:
@@ -349,14 +501,16 @@ def main():
 
     if 'output' not in config:
         config['output'] = os.path.dirname(os.path.abspath(args.config))
+        config_print['output'] = os.path.dirname(os.path.abspath(args.config))
 
     # Save the configuration file in the output directory
     os.makedirs(os.path.join(config['output'], "patterns"), exist_ok=True)
     with open(os.path.join(config['output'], "opt_config.json"), 'w') as f:
         json.dump(config, f, indent=4)
 
-    # Run the optimization
-    optimize(config)
+    # Run the optimization with the additional config_print argument
+    optimize(config, config_print=config_print)
+
 
 if __name__ == "__main__":
     main()

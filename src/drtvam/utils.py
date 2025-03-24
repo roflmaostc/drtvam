@@ -53,9 +53,9 @@ def save_histogram(vol, target, filename, efficiency):
     plt.hist(voxels_final[obj_mask], bins=500, label="Object", alpha=0.55)
     plt.hist(voxels_final[~obj_mask], bins=500, label="Empty", alpha=0.55)
 
-    # test a range from 0 to 1.3
+    # test a range from 0 to 2
     print("Finding threshold for best IoU ...")
-    thresholds = np.linspace(0, 1.3, 1000)
+    thresholds = np.linspace(0, 3, 1000)
     ious = [iou_loss(vol, target, t)[0] for t in thresholds]
     iou = max(ious)
     best_threshold = np.argmax(np.array(ious))
