@@ -14,11 +14,12 @@ import matplotlib.pyplot as plt
 
 
 
+@pytest.mark.parametrize("fname", ['tests/files/box_hole_occlusion.json',\
+                                   "tests/files/box_hole_occlusion_filter_radon.json"])
 @pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])
-def test_square_hole_occlusion_optimization(variant):
+def test_square_hole_occlusion_optimization(fname, variant):
     mi.set_variant(variant)
 
-    fname = 'tests/files/box_hole_occlusion.json'
     # Load the configuration file
     with open(fname, 'r') as f:
         config = json.load(f)
