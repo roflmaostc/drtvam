@@ -69,7 +69,7 @@ def save_histogram(vol, target, filename, efficiency, vol_normalized_peak_intens
     # meaning, if the best_threshold_normalized is a factor of 2 smaller to
     # another optimization with different parameters, this means we need a
     # factor of 2 less printing time.
-    thresholds_normalized = np.linspace(0, np.max(vol / vol_normalized_peak_intensity), 1000)
+    thresholds_normalized = np.linspace(0, np.max(vol_normalized_peak_intensity), 1000)
     ious_normalized = [iou_loss(vol_normalized_peak_intensity, target, t)[0] for t in thresholds_normalized]
     iou_normalized = max(ious_normalized)
     best_threshold_normalized = np.argmax(np.array(ious_normalized))
