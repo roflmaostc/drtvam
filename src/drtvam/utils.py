@@ -44,7 +44,7 @@ def save_vol(vol, path):
     bmp = mi.Bitmap(mi.TensorXf(reshape_grid(vol)))
     bmp.write(path)
 
-def save_histogram(vol, target, filename, efficiency):
+def save_histogram(vol, target, filename, efficiency, vol_normalized_peak_intensity):
     fig = plt.figure(figsize=(10, 5))
     obj_mask = target.numpy().flatten() > 0.
 
@@ -59,11 +59,25 @@ def save_histogram(vol, target, filename, efficiency):
     ious = [iou_loss(vol, target, t)[0] for t in thresholds]
     iou = max(ious)
     best_threshold = np.argmax(np.array(ious))
-    print("best IoU: {:.4f}".format(iou))
-    print("best threshold: {:4f}".format(thresholds[best_threshold]))
+    print("Best IoU: {:.4f}".format(iou))
+    print("Best threshold: {:4f}".format(thresholds[best_threshold]))
+
+
+    # depending on the loss function the maximum pixel might be different
+    # With a DMD in practice, this means the real printing time is different
+    # with the best_threshold_normalized we know the absolute scaling
+    # meaning, if the best_threshold_normalized is a factor of 2 smaller to
+    # another optimization with different parameters, this means we need a
+    # factor of 2 less printing time.
+    thresholds_normalized = np.linspace(0, np.max(vol_normalized_peak_intensity), 1000)
+    ious_normalized = [iou_loss(vol_normalized_peak_intensity, target, t)[0] for t in thresholds_normalized]
+    iou_normalized = max(ious_normalized)
+    best_threshold_normalized = np.argmax(np.array(ious_normalized))
+    print("Best normalized threshold: {:4f}".format(thresholds_normalized[best_threshold_normalized]))
 
     plt.xlim([0, 1.2])
-    plt.title("pattern energy efficiency = {:.4f}, IoU = {:.4f} at threshold = {:.3f}".format(efficiency, iou, thresholds[best_threshold]))
+    plt.title("pattern energy efficiency = {:.4f}, IoU = {:.4f} at threshold = {:.3f}, normalized threshold = {:.3f}".\
+              format(efficiency, iou, thresholds[best_threshold], thresholds_normalized[best_threshold_normalized]))
     plt.yscale('log')
     plt.ylabel("# Voxels")
     plt.xlabel("Received dose")

@@ -305,7 +305,10 @@ def optimize(config):
     efficiency = np.sum(normalized_array / normalized_array.size)
     print("Pattern efficiency {:.4f}".format(efficiency))
 
-    save_histogram(vol_final, target, os.path.join(output, "histogram.png"), efficiency)
+    max_intensity_pattern = np.max(imgs_final.numpy())
+
+    save_histogram(vol_final, target, os.path.join(output, "histogram.png"),
+                   efficiency, vol_final / max_intensity_pattern)
 
     return vol_final
 
