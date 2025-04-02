@@ -175,6 +175,7 @@ def optimize(config):
         dr.flush_malloc_cache()
         dr.sync_thread()
 
+    print((params['projector.active_pixels']))
 
 
     # If not using the surface-aware discretization, we don't need the target shape anymore, so we just move it far away
@@ -267,7 +268,38 @@ def optimize(config):
     })
 
     print("Rendering final state...")
+
     params.update(opt)
+
+    # params = mi.traverse(scene)
+    # params['projector.active_pixels'] = dr.zeros(mi.UInt32, 3)
+    # params['projector.active_pixels'][0] = 1024 * 368 + 510
+    # params['projector.active_pixels'][1] = 1024 * 368 + 512
+    # params['projector.active_pixels'][2] = 1024 * 368 + 515
+    data = dr.zeros(mi.Float, dr.width(params['projector.active_pixels']))
+    data[400 * 150 + 200] = 100000
+    params['projector.active_data'] = data
+    params.update()
+    # data[400 * 150 + 100] = 100000
+    # params['projector.active_data'] = data
+    # params.update()
+    # data[400 * 100 + 100] = 100000
+    # params['projector.active_data'] = data
+    # params.update()
+    print(params['projector.active_pixels'])
+    print(params['projector.active_data'])
+    print(scene.emitters())
+    params.update()
+
+    #params['projector.active_pixels'] = mi.UInt32(1024 * 368 + 512)
+    #params['projector.active_data'] = mi.Float(100)
+    #params.update()
+    #params['projector.active_pixels'] = mi.UInt32(1024 * 368 + 512)
+    #params['projector.active_data'] = mi.Float(100)
+    #params.update()
+    #params['projector.active_pixels'] = mi.UInt32(1024 * 700 + 512)
+    #params['projector.active_data'] = mi.Float(100)
+    #params.update()
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
@@ -278,6 +310,7 @@ def optimize(config):
 
     imgs_final = scene.emitters()[0].patterns()
     dr.eval(imgs_final)
+
 
     print("Saving images...")
     for i in trange(imgs_final.shape[0]):
