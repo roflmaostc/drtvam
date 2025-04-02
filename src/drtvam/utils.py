@@ -3,6 +3,7 @@ import drjit as dr
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 def iou_loss(pred, target, threshold=0.9):
     obj_mask = target.array > 0.
@@ -56,7 +57,7 @@ def save_histogram(vol, target, filename, efficiency, max_pattern_intensity):
     # test a range from 0 to 1.3
     print("Finding threshold for best IoU ...")
     thresholds = np.linspace(0, 1.3, 1000)
-    ious = [iou_loss(vol, target, t)[0] for t in thresholds]
+    ious = [iou_loss(vol, target, t)[0] for t in tqdm(thresholds)]
     iou = max(ious)
     best_threshold = np.argmax(np.array(ious))
     print("Best IoU: {:.4f}".format(iou))
