@@ -133,9 +133,10 @@ def optimize(config):
         scene_filter_radon = mi.load_dict(scene_filter_radon_dict)
 
         # Deactivate pixels where the Radon transform is zero
+        # max_depth large enough to cover deep scenes
         radon_integrator = mi.load_dict({
             'type': 'radon',
-            'max_depth': 3,
+            'max_depth': 20,
         })
         radon = mi.render(scene_filter_radon, integrator=radon_integrator, spp=4)
 
