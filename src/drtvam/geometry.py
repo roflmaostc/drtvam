@@ -74,7 +74,7 @@ class Container:
                         'type': 'diffuse',
                         'reflectance': {
                             'type': 'spectrum',
-                            'value': 0.5 # All black
+                            'value': 0.0 # All black
                         }
                     }
                 }
@@ -149,113 +149,97 @@ class DoubleCylindricalVial(Container):
     def __init__(self, params):
         super().__init__(params)
 
-        # inner radius of inner cylinder
-        self.r_1 = params['r_1']
-        # outer radius of inner cylinder
-        self.r_2 = params['r_2']
-        # inner radius of outer cylinder
-        self.r_3 = params['r_3']
-        # outer radius of outer cylinder
-        self.r_4 = params['r_4']
+        # ext radius of outer cylinder
+        self.r_ext_outer = params['r_ext_outer']
+        # int radius of outer cylinder
+        self.r_int_outer = params['r_int_outer']
+        # ext radius of inner cylinder
+        self.r_ext_inner = params['r_ext_inner']
+        # int radius of inner cylinder
+        self.r_int_inner = params['r_int_inner']
+
         self.height = params.get('height', 40.)
         # refractive index of inner cylinder material
-        self.vial_ior_12 = params['ior_12']
+        self.vial_ior_inner = params['ior_inner']
         # refractive index of outer cylinder material
-        self.vial_ior_34 = params['ior_34']
+        self.vial_ior_outer = params['ior_outer']
 
-        # medium inside the inner cylinder
-        medium_1 = params['medium_1']
-        self.medium_ior_1 = medium_1['ior']
-        self.sigma_t_1 = medium_1['extinction']
-        self.albedo_1 = medium_1['albedo'] # Purely absorptive by default
-        if 'phase' in medium_1.keys():
-            self.medium_phase_1 = medium_1['phase']
-        elif self.albedo_1 > 0.:
+
+        # printin medium
+        medium = params['medium']
+        self.medium_ior = medium['ior']
+        self.sigma_t = medium['extinction']
+        self.albedo = medium['albedo'] # Purely absorptive by default
+        if 'phase' in medium.keys():
+            self.medium_phase = medium['phase']
+        elif self.albedo > 0.:
             raise ValueError(f"[{self.__class__.__name__}] Tried to load a scattering medium without specifying a phase function.")
         else:
-            self.medium_phase_1 = None
+            self.medium_phase = None
 
-        # medium between the outer cylinder and the inner cylinder
-        medium_2 = params['medium_2']
-        self.medium_ior_2 = medium_2['ior']
-        self.sigma_t_2 = medium_2['extinction']
-        self.albedo_2 = medium_2['albedo'] # Purely absorptive by default
-        if 'phase' in medium_2.keys():
-            self.medium_phase_2 = medium_2['phase']
-        elif self.albedo_2 > 0.:
-            raise ValueError(f"[{self.__class__.__name__}] Tried to load a scattering medium without specifying a phase function.")
-        else:
-            self.medium_phase_2 = None
+        self.inside_inner_ior = params['ior_inside_inner']
 
 
-
-    def medium_dict_1(self):
-        medium_dict_1 = {
+    def medium_dict(self):
+        medium_dict = {
             'type': 'homogeneous',
-            'sigma_t': self.sigma_t_1,
-            'albedo': self.albedo_1,
+            'sigma_t': self.sigma_t,
+            'albedo': self.albedo,
+            'id': 'printing_medium',
             }
-        if self.medium_phase_1 is not None:
-            medium_dict_1['phase'] = self.medium_phase_1
-        return medium_dict_1
-
-    def medium_dict_2(self):
-        medium_dict_2 = {
-            'type': 'homogeneous',
-            'sigma_t': self.sigma_t_2,
-            'albedo': self.albedo_2,
-            }
-        if self.medium_phase_2 is not None:
-            medium_dict_2['phase'] = self.medium_phase_2
-        return medium_dict_2
+        if self.medium_phase is not None:
+            medium_dict['phase'] = self.medium_phase
+        return medium_dict
 
 
     def to_dict(self):
         #TODO: add endcaps
         d = {
+            'printing_medium' : self.medium_dict(),
             'outer_vial' : {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
                 'p1': [0., 0.,  0.5 * self.height],
-                'radius': self.r_4,
+                'radius': self.r_ext_outer,
                 'bsdf': {
                     'type': 'dielectric',
-                    'int_ior': self.vial_ior_34,
+                    'int_ior': self.vial_ior_outer,
                 },
             },
             'outer_vial_interior': {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
                 'p1': [0., 0.,  0.5 * self.height],
-                'radius': self.r_3,
+                'radius': self.r_int_outer,
                 'bsdf': {
                     'type': 'dielectric',
-                    'ext_ior': self.vial_ior_34,
-                    'int_ior': self.medium_ior_2,
+                    'ext_ior': self.vial_ior_outer,
+                    'int_ior': self.medium_ior,
                 },
-                'interior': self.medium_dict_2(),
+                'interior': {"type": "ref", "id": "printing_medium"},
             },
             'inner_vial' : {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
                 'p1': [0., 0.,  0.5 * self.height],
-                'radius': self.r_2,
+                'radius': self.r_ext_inner,
                 'bsdf': {
                     'type': 'dielectric',
-                    'int_ior': self.vial_ior_12,
+                    'int_ior': self.vial_ior_inner,
+                    'ext_ior': self.vial_ior_outer,
                 },
+                'exterior': {"type": "ref", "id": "printing_medium"},
             },
             'inner_vial_interior': {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
                 'p1': [0., 0.,  0.5 * self.height],
-                'radius': self.r_1,
+                'radius': self.r_int_inner,
                 'bsdf': {
                     'type': 'dielectric',
-                    'ext_ior': self.vial_ior_12,
-                    'int_ior': self.medium_ior_1,
-                },
-                'interior_inside': self.medium_dict_1(),
+                    'ext_ior': self.vial_ior_inner,
+                    'int_ior': self.inside_inner_ior
+                }
             }
         }
         d = self.add_occlusions(d)
