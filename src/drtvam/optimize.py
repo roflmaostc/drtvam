@@ -268,6 +268,19 @@ def optimize(config):
 
     print("Rendering final state...")
     params.update(opt)
+#
+#    params['projector.active_data'] = dr.ones(mi.UInt32, 7)
+#    params['projector.active_pixels'] = dr.zeros(mi.UInt32, 7)
+#    params['projector.active_pixels'][0] = 200 * 10 + 100 - 30
+#    params['projector.active_pixels'][1] = 200 * 10 + 100 + 0
+#    params['projector.active_pixels'][2] = 200 * 10 + 100 + 30
+#    params['projector.active_pixels'][3] = 200 * 10 + 100 + 60
+#    params['projector.active_pixels'][4] = 200 * 10 + 100 + 90
+#    params['projector.active_pixels'][5] = 200 * 10 + 100 - 60
+#    params['projector.active_pixels'][6] = 200 * 10 + 100 - 90
+#
+#
+#    params.update()
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
