@@ -48,7 +48,7 @@ def load_scene(config):
     # then scale to the size of the bounding box
     # then translate to user specified position (if there is one)
     target_to_world = mi.ScalarTransform4f().translate(center_pos) @ \
-    mi.ScalarTransform4f().scale(size / dr.max(bbox.extents())) @ mi.ScalarTransform4f().translate(-c)
+      mi.ScalarTransform4f().scale(size / dr.max(bbox.extents())) @ mi.ScalarTransform4f().translate(-c)
 
     def get_sensor_transform(sensor_dict):
         sensor_scalex = sensor_dict.pop('scalex', 1.)
