@@ -137,7 +137,7 @@ def optimize(config):
             'type': 'radon',
             'max_depth': 5,
         })
-        radon = mi.render(scene_filter_radon, integrator=radon_integrator, config.get('spp_radon', 4))
+        radon = mi.render(scene_filter_radon, integrator=radon_integrator, spp=config.get('spp_filter_radon', 4))
 
         active_pixels = dr.compress(radon.array > 0.) + dr.opaque(mi.UInt32, 0) # Hack to get the result of compress to only use its actual size
         dr.eval(active_pixels)
