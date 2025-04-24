@@ -222,43 +222,43 @@ def optimize(config):
     timing_hist = np.zeros((n_steps, 2))
 
     print("Optimizing patterns...")
-    for i in trange(n_steps):
-        if progressive and i == 5:
-            integrator.max_depth = max_depth
+    #for i in trange(n_steps):
+    #    if progressive and i == 5:
+    #        integrator.max_depth = max_depth
 
-        with dr.scoped_set_flag(dr.JitFlag.KernelHistory, True):
-            params.update(opt)
+    #    with dr.scoped_set_flag(dr.JitFlag.KernelHistory, True):
+    #        params.update(opt)
 
-            vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
-            dr.schedule(vol)
+    #        vol = mi.render(scene, params, integrator=integrator, sensor=sensor, spp=spp, spp_grad=spp_grad, seed=i)
+    #        dr.schedule(vol)
 
-            mi.Log(mi.LogLevel.Debug, "[drtvam] Calling loss from optimize loop")
-            loss = loss_fn(vol, target, params['projector.active_data'])
-            dr.eval(loss)
+    #        mi.Log(mi.LogLevel.Debug, "[drtvam] Calling loss from optimize loop")
+    #        loss = loss_fn(vol, target, params['projector.active_data'])
+    #        dr.eval(loss)
 
-            # numpy conversion is necessary to store the loss value
-            # apparently in just loss.numpy() is deprecated since (Deprecated NumPy 1.25.)
-            loss_hist[i] = loss[0].numpy()
+    #        # numpy conversion is necessary to store the loss value
+    #        # apparently in just loss.numpy() is deprecated since (Deprecated NumPy 1.25.)
+    #        loss_hist[i] = loss[0].numpy()
 
-            # Primal timing
-            timing_hist[i, 0] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
+    #        # Primal timing
+    #        timing_hist[i, 0] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
 
-            dr.backward(loss)
+    #        dr.backward(loss)
 
-            if dr.all(loss == 0):
-                print("Converged")
-                break
+    #        if dr.all(loss == 0):
+    #            print("Converged")
+    #            break
 
-            if optim_type == 'lbfgs':
-                opt.step(vol, loss)
-            else:
-                opt.step()
+    #        if optim_type == 'lbfgs':
+    #            opt.step(vol, loss)
+    #        else:
+    #            opt.step()
 
-            # Clamp patterns
-            opt[patterns_key] = dr.maximum(dr.detach(opt[patterns_key]), 0)
+    #        # Clamp patterns
+    #        opt[patterns_key] = dr.maximum(dr.detach(opt[patterns_key]), 0)
 
-            # Adjoint timing
-            timing_hist[i, 1] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
+    #        # Adjoint timing
+    #        timing_hist[i, 1] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
 
     integrator_final = mi.load_dict({
         'type': 'volume',
@@ -276,9 +276,34 @@ def optimize(config):
     # params['projector.active_pixels'][0] = 1024 * 368 + 510
     # params['projector.active_pixels'][1] = 1024 * 368 + 512
     # params['projector.active_pixels'][2] = 1024 * 368 + 515
-    data = dr.zeros(mi.Float, dr.width(params['projector.active_pixels']))
-    data[400 * 150 + 200] = 100000
-    params['projector.active_data'] = data
+    # data = dr.zeros(mi.Float, dr.width(params['projector.active_pixels']))
+    # data[400 * 150 + 200] = 100000
+    # params['projector.active_data'] = data
+    params['projector.active_data'] = dr.ones(mi.UInt32, 7) * 100
+    params['projector.active_pixels'] = dr.zeros(mi.UInt32, 7)
+    params['projector.active_pixels'][0] = 800 * 250 + 400
+    params['projector.active_pixels'][1] = 800 * 250 + 400 - 100
+    params['projector.active_pixels'][2] = 800 * 250 + 400 + 100
+    params['projector.active_pixels'][3] = 800 * 250 + 400 - 200
+    params['projector.active_pixels'][4] = 800 * 250 + 400 + 200
+    params['projector.active_pixels'][5] = 800 * 250 + 400 - 300
+    params['projector.active_pixels'][6] = 800 * 250 + 400 + 300
+
+    # params['projector.active_pixels'][0] = 800 * 250 + 400
+    # params['projector.active_pixels'][1] = 800 * 250 + 400 + 50
+    # params['projector.active_pixels'][2] = 800 * 250 + 400 - 100
+    # params['projector.active_pixels'][3] = 800 * 250 + 400 + 100
+    # params['projector.active_pixels'][4] = 800 * 250 + 400 - 100
+    # params['projector.active_pixels'][5] = 800 * 250 + 400 + 150
+    # params['projector.active_pixels'][6] = 800 * 250 + 400 - 150
+    # params['projector.active_pixels'][7] = 800 * 250 + 400 + 200
+    # params['projector.active_pixels'][8] = 800 * 250 + 400 - 200
+    # params['projector.active_pixels'][9] = 800 * 250 + 400 + 250
+    # params['projector.active_pixels'][10] = 800 * 250 + 400 - 250
+    # params['projector.active_pixels'][11] = 800 * 250 + 400 + 300
+    # params['projector.active_pixels'][12] = 800 * 250 + 400 - 300
+    # params['projector.active_pixels'][13]= 800 * 250 + 0
+    # params['projector.active_pixels'][14]= 800 * 250 + 799
     params.update()
     # data[400 * 150 + 100] = 100000
     # params['projector.active_data'] = data
@@ -340,8 +365,8 @@ def optimize(config):
 
     max_intensity_pattern = np.max(imgs_final.numpy())
 
-    save_histogram(vol_final, target, os.path.join(output, "histogram.png"),
-                   efficiency, vol_final / max_intensity_pattern)
+    # save_histogram(vol_final, target, os.path.join(output, "histogram.png"),
+                   # efficiency, vol_final / max_intensity_pattern)
 
     return vol_final
 
