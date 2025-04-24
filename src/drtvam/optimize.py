@@ -38,8 +38,17 @@ def load_scene(config):
 
     c = 0.5 * (bbox.min + bbox.max)
     size = config['target'].get('size', 1.)
+    center_pos_x = config['target'].get('box_center_x', 0.)
+    center_pos_y = config['target'].get('box_center_y', 0.)
+    center_pos_z = config['target'].get('box_center_z', 0.)
+
+    center_pos = mi.ScalarPoint3f(center_pos_x, center_pos_y, center_pos_z) - c
     # Scale and center the target object
-    target_to_world = mi.ScalarTransform4f().scale(size / dr.max(bbox.extents())) @ mi.ScalarTransform4f().translate(-c)
+    # first translate to the center of the bounding box
+    # then scale to the size of the bounding box
+    # then translate to user specified position (if there is one)
+    target_to_world = mi.ScalarTransform4f().translate(center_pos) @ \
+    mi.ScalarTransform4f().scale(size / dr.max(bbox.extents())) @ mi.ScalarTransform4f().translate(-c)
 
     def get_sensor_transform(sensor_dict):
         sensor_scalex = sensor_dict.pop('scalex', 1.)
