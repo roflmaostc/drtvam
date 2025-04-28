@@ -76,8 +76,8 @@ various aspects of the optimization:
         The shape will be centered  at the
         origin and scaled such that its size in the largest dimension is equal
         to the specified size. The target shape is used to compute the target
-        absorption map. If this dict contains the entries ``center_box_x: 2``, 
-        ``center_box_y: 3``, and ``center_box_z: 4``, the target shape box 
+        absorption map. If this dict contains the entries ``"box_center_x": 2``, 
+        ``"box_center_y": 3``, and ``"box_center_z": 4``, the target shape box 
         will be centered at the coordinates ``(2, 3, 4)`` after the target
         has been scaled to ``size``.
 
