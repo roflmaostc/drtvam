@@ -142,9 +142,10 @@ def optimize(config):
         scene_filter_radon = mi.load_dict(scene_filter_radon_dict)
 
         # Deactivate pixels where the Radon transform is zero
+        # max_depth large enough to cover deep scenes
         radon_integrator = mi.load_dict({
             'type': 'radon',
-            'max_depth': 5,
+            'max_depth': 20
         })
         radon = mi.render(scene_filter_radon, integrator=radon_integrator, spp=config.get('spp_filter_radon', 4))
 
@@ -277,6 +278,19 @@ def optimize(config):
 
     print("Rendering final state...")
     params.update(opt)
+#
+#    params['projector.active_data'] = dr.ones(mi.UInt32, 7)
+#    params['projector.active_pixels'] = dr.zeros(mi.UInt32, 7)
+#    params['projector.active_pixels'][0] = 200 * 10 + 100 - 30
+#    params['projector.active_pixels'][1] = 200 * 10 + 100 + 0
+#    params['projector.active_pixels'][2] = 200 * 10 + 100 + 30
+#    params['projector.active_pixels'][3] = 200 * 10 + 100 + 60
+#    params['projector.active_pixels'][4] = 200 * 10 + 100 + 90
+#    params['projector.active_pixels'][5] = 200 * 10 + 100 - 60
+#    params['projector.active_pixels'][6] = 200 * 10 + 100 - 90
+#
+#
+#    params.update()
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
