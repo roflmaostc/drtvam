@@ -62,7 +62,7 @@ class Container:
                     'type': 'diffuse',
                     'reflectance': {
                         'type': 'spectrum',
-                        'value': 0.5 # All black
+                        'value': 0.0 # All black
                     }
                 }
             }
