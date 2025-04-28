@@ -225,8 +225,8 @@ class DoubleCylindricalVial(Container):
                 'radius': self.r_ext_inner,
                 'bsdf': {
                     'type': 'dielectric',
+                    'ext_ior': self.medium_ior,
                     'int_ior': self.vial_ior_inner,
-                    'ext_ior': self.vial_ior_outer,
                 },
                 'exterior': {"type": "ref", "id": "printing_medium"},
             },
