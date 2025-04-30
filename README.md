@@ -44,6 +44,10 @@
 <br />
 <br />
 
+## Abstract
+Tomographic Volumetric Additive Manufacturing (TVAM) is an emerging 3D printing technology that can create complex objects in under a minute. The key idea is to project intense light patterns onto a rotating vial of photo-sensitive resin, causing polymerization where the cumulative dose of these patterns reaches the polymerization threshold. We formulate the pattern calculation as an inverse light transport problem and solve it via physically based differentiable rendering. In doing so, we address long-standing limitations of prior work by accurately modeling and correcting for scattering in composite resins, printing in non-symmetric vials, and supporting unusual printing geometries. We also introduce an improved discretization scheme that exploits the ray tracing operation to mitigate resolution-related artifacts in prints. We demonstrate the benefits of our method in real-world experiments, where our computed patterns produce prints with an improved fidelity.
+
+
 
 ## About this project
 
