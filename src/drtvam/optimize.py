@@ -42,7 +42,7 @@ def load_scene(config):
     center_pos_y = config['target'].get('box_center_y', 0.)
     center_pos_z = config['target'].get('box_center_z', 0.)
 
-    center_pos = mi.ScalarPoint3f(center_pos_x, center_pos_y, center_pos_z) - c
+    center_pos = mi.ScalarPoint3f(center_pos_x, center_pos_y, center_pos_z)
     # Scale and center the target object
     # first translate to the center of the bounding box
     # then scale to the size of the bounding box
