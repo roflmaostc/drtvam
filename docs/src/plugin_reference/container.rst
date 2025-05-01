@@ -22,16 +22,16 @@ A container can be instantiated as follows:
 .. code-block:: python
 
     vial = IndexMatchedVial({
-        'r': 2.5,
-        'height': 10,
-        'medium': {
-            'extinction': 0.1,
-            'albedo': 0.9,
-            'phase': {
-                'type': 'hg',
-                'g': 0.5
+        "r": 2.5,
+        "height": 10,
+        "medium": {
+            "extinction": 0.1,
+            "albedo": 0.9,
+            "phase": {
+                "type": "hg",
+                "g": 0.5
             },
-            'ior': 1.5
+            "ior": 1.5
         }
     })
 
@@ -253,4 +253,3 @@ dielectric interfaces. It takes the following parameters:
     * - ``medium``
       - ``dict``
       - The medium dictionary, as described above.
-

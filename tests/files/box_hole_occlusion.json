@@ -12,21 +12,30 @@
             "extinction": 0.06,
             "albedo": 0.0
         },
-        "top_occlusion": "tests/files/occlusion.ply"
+        "occlusions": [
+            {"filename": "tests/files/cylinder_occlusion.ply",
+             "bsdf": {                                                   
+                "type": "diffuse",                                      
+                "reflectance": {                                        
+                    "type": "spectrum",                                 
+                    "value": 1.0
+            }}
+            }
+        ]
     },
     "projector": {
         "type": "collimated",
-        "n_patterns": 200,
+        "n_patterns": 50,
         "resx": 200,
-        "resy": 20,
+        "resy": 40,
         "pixel_size": 50e-3,
         "motion": "circular",
         "distance": 20
     },
     "sensor": {
         "type": "dda",
-        "scalex": 5,
-        "scaley": 5,
+        "scalex": 8,
+        "scaley": 8,
         "scalez": 1.25,
         "film": {
             "type": "vfilm",
@@ -36,14 +45,20 @@
         }
     },
     "target": {
-        "filename": "tests/files/box_hole.ply",
-        "size": 4.0
+        "filename": "tests/files/cylinder.ply",
+        "size": 10.0
     },
     "loss": {
         "type": "threshold",
         "tl": 0.9,
         "tu": 0.97
     },
-    "progressive": true,
-    "n_steps": 70
+    "transmission_only": false,
+    "regular_sampling": false,
+    "spp": 32,
+    "spp_ref": 32,
+    "spp_grad": 32,
+    "progressive": false,
+    "n_steps": 40,
+    "max_depth": 10
 }
