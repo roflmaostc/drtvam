@@ -25,8 +25,7 @@ class Container:
             self.sigma_t = medium['extinction']
             self.albedo = medium['albedo'] # Purely absorptive by default
         # add some occlusions
-        self.top_occlusion = params.get('top_occlusion')
-        self.bottom_occlusion = params.get('bottom_occlusion')
+        self.occlusions = params.get('occlusions', [])
 
         if medium is not None:
             if 'phase' in medium.keys():
@@ -41,6 +40,7 @@ class Container:
             'type': 'homogeneous',
             'sigma_t': self.sigma_t,
             'albedo': self.albedo,
+            'id': 'printing_medium'
             }
         if self.medium_phase is not None:
             medium_dict['phase'] = self.medium_phase
@@ -49,36 +49,19 @@ class Container:
     def to_dict(self):
         raise NotImplementedError
 
-    # add occulsions to the container such as a bottom and top cap or some
+    # add occlusions to the container such as a bottom and top cap or some
     # inlets to print around
     # the loaded .ply files should be exported as .ply with the
     # relative position to the container. (0,0,0) is the center of the container
     def add_occlusions(self, dd):
-        if self.bottom_occlusion is not None:
-            dd['insert_bottom'] = {
+        for occlusion in self.occlusions:
+            dd["occlusion" + occlusion["filename"].replace("/", "_").replace(".", "_")] = {
                 'type': 'ply',
-                'filename': self.bottom_occlusion,
-                'bsdf': {
-                    'type': 'diffuse',
-                    'reflectance': {
-                        'type': 'spectrum',
-                        'value': 0.5 # All black
-                    }
-                }
+                'filename': occlusion["filename"],
+                'bsdf': occlusion["bsdf"],
+                'exterior': {"type": "ref", "id": "printing_medium"}
             }
-        if self.top_occlusion is not None:
-            dd['insert_top'] = {
-                    'type': 'ply',
-                    'filename': self.top_occlusion,
-                    'bsdf': {
-                        'type': 'diffuse',
-                        'reflectance': {
-                            'type': 'spectrum',
-                            'value': 0.0 # All black
-                        }
-                    }
-                }
-
+        print(dd)
         return dd
 
 
@@ -91,6 +74,7 @@ class IndexMatchedVial(Container):
 
     def to_dict(self):
         d = {
+            'printing_medium' : self.medium_dict(),
             'vial_exterior': {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
@@ -98,11 +82,11 @@ class IndexMatchedVial(Container):
                 'radius': self.r,
                 'bsdf': {'type': 'null'},
                 #TODO: do this differently for custom geometries with more than one interface with the medium
-                'interior': self.medium_dict(),
+                'interior': {"type": "ref", "id": "printing_medium"},
             }
         }
         d = self.add_occlusions(d)
-        return dline
+        return d
 
 
 class CylindricalVial(Container):
@@ -117,6 +101,7 @@ class CylindricalVial(Container):
     def to_dict(self):
         #TODO: add endcaps
         d = {
+            'printing_medium' : self.medium_dict(),
             'vial_exterior' : {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
@@ -125,6 +110,7 @@ class CylindricalVial(Container):
                 'bsdf': {
                     'type': 'dielectric',
                     'int_ior': self.vial_ior,
+                    'ext_ior': "air",
                 },
             },
             'vial_interior': {
@@ -138,7 +124,7 @@ class CylindricalVial(Container):
                     'int_ior': self.medium_ior,
                 },
                 #TODO: do this differently for custom geometries with more than one interface with the medium
-                'interior': self.medium_dict(),
+                'interior': {"type": "ref", "id": "printing_medium"},
             }
         }
 
@@ -179,17 +165,6 @@ class DoubleCylindricalVial(Container):
 
         self.inside_inner_ior = params['ior_inside_inner']
 
-
-    def medium_dict(self):
-        medium_dict = {
-            'type': 'homogeneous',
-            'sigma_t': self.sigma_t,
-            'albedo': self.albedo,
-            'id': 'printing_medium',
-            }
-        if self.medium_phase is not None:
-            medium_dict['phase'] = self.medium_phase
-        return medium_dict
 
 
     def to_dict(self):
@@ -258,6 +233,7 @@ class CylindricalVial(Container):
     def to_dict(self):
         #TODO: add endcaps
         d = {
+            'printing_medium' : self.medium_dict(),
             'vial_exterior' : {
                 'type': 'cylinder',
                 'p0': [0., 0., -0.5 * self.height],
@@ -279,7 +255,7 @@ class CylindricalVial(Container):
                     'int_ior': self.medium_ior,
                 },
                 #TODO: do this differently for custom geometries with more than one interface with the medium
-                'interior': self.medium_dict(),
+                'interior': {"type": "ref", "id": "printing_medium"},
             }
         }
 
@@ -299,6 +275,7 @@ class SquareVial(Container):
 
     def to_dict(self):
         d = {
+            'printing_medium' : self.medium_dict(),
             'vial_exterior' : {
                 'type': 'cube',
                 'to_world': mi.ScalarTransform4f().scale((0.5*self.w_ext, 0.5*self.w_ext, 0.5*self.height)),
@@ -316,7 +293,7 @@ class SquareVial(Container):
                     'int_ior': self.medium_ior,
                 },
                 #TODO: do this differently for custom geometries with more than one interface with the medium
-                'interior': self.medium_dict(),
+                'interior': {"type": "ref", "id": "printing_medium"},
             }
         }
         d = self.add_occlusions(d)

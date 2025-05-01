@@ -42,7 +42,7 @@ def load_scene(config):
     center_pos_y = config['target'].get('box_center_y', 0.)
     center_pos_z = config['target'].get('box_center_z', 0.)
 
-    center_pos = mi.ScalarPoint3f(center_pos_x, center_pos_y, center_pos_z) - c
+    center_pos = mi.ScalarPoint3f(center_pos_x, center_pos_y, center_pos_z)
     # Scale and center the target object
     # first translate to the center of the bounding box
     # then scale to the size of the bounding box
@@ -73,6 +73,7 @@ def load_scene(config):
         },
     } | vial.to_dict()
 
+    print("hi", vial.to_dict())
     if 'final_sensor' in config.keys():
         final_sensor_to_world = get_sensor_transform(config['final_sensor'])
         scene_dict['final_sensor'] = config['final_sensor'] | {'to_world': final_sensor_to_world}
@@ -135,8 +136,10 @@ def optimize(config):
         # occlusions can make rays entirely blocked, but they can still
         # contribute until the occlusion, hence we just remove the occlusions
         config_filter_radon = copy.deepcopy(config)
-        config_filter_radon["vial"].pop("top_occlusion", None)
-        config_filter_radon["vial"].pop("bottom_occlusion", None)
+
+        for key in list(config_filter_radon["vial"].keys()):
+            if key.startswith("occlusion"):
+                del config_filter_radon["vial"][key]
 
         scene_filter_radon_dict = load_scene(config_filter_radon)
         scene_filter_radon = mi.load_dict(scene_filter_radon_dict)
@@ -278,19 +281,17 @@ def optimize(config):
 
     print("Rendering final state...")
     params.update(opt)
-#
-#    params['projector.active_data'] = dr.ones(mi.UInt32, 7)
-#    params['projector.active_pixels'] = dr.zeros(mi.UInt32, 7)
-#    params['projector.active_pixels'][0] = 200 * 10 + 100 - 30
-#    params['projector.active_pixels'][1] = 200 * 10 + 100 + 0
-#    params['projector.active_pixels'][2] = 200 * 10 + 100 + 30
-#    params['projector.active_pixels'][3] = 200 * 10 + 100 + 60
-#    params['projector.active_pixels'][4] = 200 * 10 + 100 + 90
-#    params['projector.active_pixels'][5] = 200 * 10 + 100 - 60
-#    params['projector.active_pixels'][6] = 200 * 10 + 100 - 90
-#
-#
-#    params.update()
+
+
+    params['projector.active_data'] = dr.ones(mi.UInt32, 40000)
+    params['projector.active_pixels'] = dr.zeros(mi.UInt32, 40000)
+    k = 0
+    for r in range(1):
+        for i in range(0, 200, 5):
+            for j in range(0, 20, 1):
+                params['projector.active_pixels'][k] = r * 200 * 20 + 200 * j + i
+                k = k+1
+    params.update()
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
