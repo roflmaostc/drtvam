@@ -272,7 +272,9 @@ def optimize(config):
         'type': 'volume',
         'max_depth': 16,
         'rr_depth': 8,
-        'print_time': time,
+        'transmission_only': transmission_only,
+        'regular_sampling': regular_sampling,
+        'print_time': time
     })
 
     print("Rendering final state...")
