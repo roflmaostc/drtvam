@@ -135,8 +135,11 @@ def optimize(config):
         # occlusions can make rays entirely blocked, but they can still
         # contribute until the occlusion, hence we just remove the occlusions
         config_filter_radon = copy.deepcopy(config)
-        config_filter_radon["vial"].pop("top_occlusion", None)
-        config_filter_radon["vial"].pop("bottom_occlusion", None)
+
+        # remove the occlusions from the radon transform
+        for key in list(config_filter_radon["vial"].keys()):
+            if key.startswith("occlusion"):
+                del config_filter_radon["vial"][key]
 
         scene_filter_radon_dict = load_scene(config_filter_radon)
         scene_filter_radon = mi.load_dict(scene_filter_radon_dict)
