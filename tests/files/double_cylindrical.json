@@ -30,9 +30,9 @@
         "scalez": 1,
         "film": {
             "type": "vfilm",
-            "resx": 50,
-            "resy": 50,
-            "resz": 1
+            "resx": 250,
+            "resy": 250,
+            "resz": 10
         }
     },
     "target": {
@@ -46,7 +46,7 @@
     },
     "progressive": true,
     "filter_radon": true,
-    "spp": 2,
-    "n_steps": 40,
+    "spp": 20,
+    "n_steps": 1,
     "max_depth": 10
 }

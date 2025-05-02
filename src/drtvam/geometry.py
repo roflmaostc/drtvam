@@ -57,7 +57,12 @@ class Container:
         for occlusion in self.occlusions:
             dd["occlusion" + occlusion["filename"].replace("/", "_").replace(".", "_")] = {
                 'type': 'ply',
+                "face_normals": occlusion.get("face_normal", True),
                 'filename': occlusion["filename"],
+                #'type': 'cylinder',
+                #'p0': [0., 0., -0.5 * self.height],
+                #'p1': [0., 0.,  0.5 * self.height],
+                #'radius': 2,
                 'bsdf': occlusion["bsdf"],
                 'exterior': {"type": "ref", "id": "printing_medium"}
             }
@@ -70,7 +75,7 @@ class IndexMatchedVial(Container):
         super().__init__(params)
 
         self.r = params['r']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 100.)
 
     def to_dict(self):
         d = {
@@ -95,7 +100,7 @@ class CylindricalVial(Container):
 
         self.r_int = params['r_int']
         self.r_ext = params['r_ext']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 100.)
         self.vial_ior = params['ior']
 
     def to_dict(self):
@@ -144,7 +149,7 @@ class DoubleCylindricalVial(Container):
         # int radius of inner cylinder
         self.r_int_inner = params['r_int_inner']
 
-        self.height = params.get('height', 40.)
+        self.height = params.get('height', 100.)
         # refractive index of inner cylinder material
         self.vial_ior_inner = params['ior_inner']
         # refractive index of outer cylinder material
@@ -200,8 +205,8 @@ class DoubleCylindricalVial(Container):
                 'radius': self.r_ext_inner,
                 'bsdf': {
                     'type': 'dielectric',
+                    'ext_ior': self.medium_ior,
                     'int_ior': self.vial_ior_inner,
-                    'ext_ior': self.vial_ior_outer,
                 },
                 'exterior': {"type": "ref", "id": "printing_medium"},
             },
@@ -227,7 +232,7 @@ class CylindricalVial(Container):
 
         self.r_int = params['r_int']
         self.r_ext = params['r_ext']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 100.)
         self.vial_ior = params['ior']
 
     def to_dict(self):
@@ -270,7 +275,7 @@ class SquareVial(Container):
 
         self.w_int = params['w_int']
         self.w_ext = params['w_ext']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 100.)
         self.vial_ior = params['ior']
 
     def to_dict(self):

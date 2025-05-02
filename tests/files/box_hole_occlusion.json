@@ -46,7 +46,7 @@
     },
     "target": {
         "filename": "tests/files/cylinder.ply",
-        "size": 10.0
+        "size": 2.0
     },
     "loss": {
         "type": "threshold",

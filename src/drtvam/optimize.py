@@ -96,6 +96,7 @@ def optimize(config):
     time = config.get('time', 1.) # Print duration in seconds
     progressive = config.get('progressive', False)
     transmission_only = config.get('transmission_only', True)
+    print("from config", transmission_only)
     regular_sampling = config.get('regular_sampling', False)
     sensor = None
     final_sensor = None
@@ -277,7 +278,11 @@ def optimize(config):
         'max_depth': 16,
         'rr_depth': 8,
         'print_time': time,
+        'transmission_only': transmission_only,
+        'regular_sampling': regular_sampling
     })
+
+
 
     print("Rendering final state...")
     params.update(opt)
@@ -287,12 +292,12 @@ def optimize(config):
     params['projector.active_pixels'] = dr.zeros(mi.UInt32, 40000)
     k = 0
     for r in range(1):
-        for i in range(0, 200, 5):
-            for j in range(0, 20, 1):
+        for i in range(0, 200, 10):
+            for j in range(0, 20, 10):
                 params['projector.active_pixels'][k] = r * 200 * 20 + 200 * j + i
                 k = k+1
     params.update()
-    vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
+    vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor, seed=2)
 
     np.save(os.path.join(output, "final.npy"), vol_final.numpy())
     save_vol(vol_final, os.path.join(output, "final.exr"))
