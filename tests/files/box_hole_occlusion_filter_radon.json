@@ -12,7 +12,7 @@
             "extinction": 0.06,
             "albedo": 0.0
         },
-        "top_occlusion": "tests/files/occlusion.ply"
+        "occlusions": [{"filename": "tests/files/occlusion.ply"}]
     },
     "projector": {
         "type": "collimated",
