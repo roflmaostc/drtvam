@@ -123,10 +123,13 @@ def optimize(config):
     # Computing reference
     if surface_aware:
         target = sensor.compute_volume(scene)
+        save_vol(target[..., 0, None], os.path.join(output, "target_in.exr"))
+        save_vol(target[..., 1, None], os.path.join(output, "target_out.exr"))
     else:
         target = discretize(scene, sensor=sensor)
-        np.save(os.path.join(output, "target.npy"), target.numpy())
         save_vol(target, os.path.join(output, "target.exr"))
+
+    np.save(os.path.join(output, "target.npy"), target.numpy())
 
     patterns_key = 'projector.active_data'
 

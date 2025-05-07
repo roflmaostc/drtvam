@@ -61,6 +61,11 @@ class VolumetricSensor(mi.Sensor):
         if target_shape is None:
             raise ValueError("No target shape found in the scene")
 
+        target_scene = mi.load_dict({
+            'type': 'scene',
+            'target': target_shape,
+        })
+
         bbox = target_shape.bbox()
         # First channel is "outside" and second channel is "inside"
         res = self.m_film.resolution()
@@ -87,7 +92,7 @@ class VolumetricSensor(mi.Sensor):
 
             # If the ray origin is outside of its bounding box, we already know it's outside the mesh
             in_mesh_bbox = dr.all((ray.o > bbox.min) & (ray.o < bbox.max))
-            si = scene.ray_intersect(ray, active=active & in_mesh_bbox)
+            si = target_scene.ray_intersect(ray, active=active & in_mesh_bbox)
 
             is_inside = si.is_valid() & (si.shape == mi.ShapePtr(target_shape)) & (dr.dot(ray.d, si.n) > 0)
 
