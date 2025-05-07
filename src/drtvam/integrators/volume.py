@@ -195,9 +195,6 @@ class VolumeIntegrator(TVAMIntegrator):
 
             hit_target = active & (si.shape == target_shape)
 
-            # Update inside/outside status
-            inside_target = hit_target & (dr.dot(si.n, ray.d) > 0)
-
             weight = mi.Spectrum(1.)
             if dr.hint(has_scattering, mode='scalar'):
                 mei = medium.sample_interaction(ray, sampler.next_1d(), 0, active_medium)
@@ -217,6 +214,9 @@ class VolumeIntegrator(TVAMIntegrator):
             active_medium &= ~reached_surface
 
             g_em, g_ss, g_st = sensor.accumulate(ray, Le, inside_target, attenuation, total_t, n_scat, si.t, mei, sampler, active=active_medium | reached_surface, δL=δL, mode=mode)
+
+            # Flip inside/outside flag if the target was hit
+            inside_target = (~inside_target & hit_target) | (inside_target & ~hit_target) # /!\ This may cause some rays to leak out
 
             if dr.hint(is_backward, mode='scalar'):
                 em_grad += g_em
