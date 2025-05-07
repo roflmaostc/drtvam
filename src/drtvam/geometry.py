@@ -64,7 +64,7 @@ class Container:
         for occlusion in self.occlusions:
             dd["occlusion" + occlusion["filename"].replace("/", "_").replace(".", "_")] = {
                 'type': 'ply',
-                "face_normals": occlusion.get("face_normal", True),
+                "face_normals": occlusion.get("face_normals", True),
                 'filename': occlusion["filename"],
                 'bsdf': occlusion.get("bsdf", default_bsf),
                 'exterior': {"type": "ref", "id": "printing_medium"}
