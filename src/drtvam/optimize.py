@@ -3,7 +3,6 @@ import mitsuba as mi
 import drjit as dr
 import numpy as np
 import os
-import copy
 from tqdm import trange
 import json
 import argparse
@@ -132,24 +131,12 @@ def optimize(config):
     patterns_key = 'projector.active_data'
 
     if filter_radon:
-        # occlusions can make rays entirely blocked, but they can still
-        # contribute until the occlusion, hence we just remove the occlusions
-        config_filter_radon = copy.deepcopy(config)
-
-        # remove the occlusions from the radon transform
-        for key in list(config_filter_radon["vial"].keys()):
-            if key.startswith("occlusion"):
-                del config_filter_radon["vial"][key]
-
-        scene_filter_radon_dict = load_scene(config_filter_radon)
-        scene_filter_radon = mi.load_dict(scene_filter_radon_dict)
-
         # Deactivate pixels where the Radon transform is zero
         radon_integrator = mi.load_dict({
             'type': 'radon',
             'max_depth': 5,
         })
-        radon = mi.render(scene_filter_radon, integrator=radon_integrator, spp=config.get('spp_filter_radon', 4))
+        radon = mi.render(scene, integrator=radon_integrator, spp=config.get('spp_filter_radon', 4))
 
         active_pixels = dr.compress(radon.array > 0.) + dr.opaque(mi.UInt32, 0) # Hack to get the result of compress to only use its actual size
         dr.eval(active_pixels)
@@ -186,7 +173,6 @@ def optimize(config):
         del corner, corner_integrator
         dr.flush_malloc_cache()
         dr.sync_thread()
-
 
 
     # If not using the surface-aware discretization, we don't need the target shape anymore, so we just move it far away

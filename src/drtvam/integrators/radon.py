@@ -60,6 +60,7 @@ class RadonIntegrator(TVAMIntegrator):
 
         active = mi.Bool(True)
         active_medium = mi.Bool(False)
+        inside_target = mi.Bool(False)
         throughput = mi.Spectrum(1.0)
         L = mi.Spectrum(0.0)
         t = mi.Float(0.0)
@@ -72,10 +73,11 @@ class RadonIntegrator(TVAMIntegrator):
 
             # Here we make the assumption that the medium is purely absorptive
             contrib = throughput * dr.exp(-sigma_t*t) * (1 - dr.exp(-sigma_t * si.t))
-            is_object = active & (si.shape == target_shape)
-            is_inside = is_object & (dr.dot(ray.d, si.n) > 0.0)
-            L[is_inside & active_medium] += contrib
+            hit_target = active & (si.shape == target_shape)
+            L[inside_target & active_medium] += contrib
             t[active] += si.t
+
+            inside_target = (~inside_target & hit_target) | (inside_target & ~hit_target) # /!\ This may cause some rays to leak out
 
             bsdf = si.bsdf(ray)
             ctx = mi.BSDFContext()
@@ -96,7 +98,7 @@ class RadonIntegrator(TVAMIntegrator):
 
             ray[active] = si.spawn_ray(si.to_world(bs.wo))
 
-            d[active & ~is_object] += 1
+            d[active & ~hit_target] += 1
             active &= (d < self.max_depth)
 
             active_medium = (active_medium & ~si.is_medium_transition()) | (si.is_medium_transition() & (si.target_medium(ray.d) != None))
