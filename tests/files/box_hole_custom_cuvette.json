@@ -1,11 +1,11 @@
 {
     "vial": {
         "type": "custom",
-        "filename_vial_outer": "cuvette_outer2.ply",
-        "filename_vial_inner": "cuvette_inner2.ply",
-        "ior": 1.0,
+        "filename_vial_outer": "cuvette_outer.ply",
+        "filename_vial_inner": "cuvette_inner.ply",
+        "ior": 1.52,
         "medium": {
-            "ior": 1.0,
+            "ior": 1.33,
             "phase": {
                 "type": "rayleigh"
             },
@@ -24,8 +24,8 @@
     },
     "sensor": {
         "type": "dda",
-        "scalex": 5,
-        "scaley": 5,
+        "scalex": 7,
+        "scaley": 7,
         "scalez": 1,
         "film": {
             "type": "vfilm",

@@ -113,6 +113,7 @@ class CustomVial(Container):
             'printing_medium' : self.medium_dict(),
             'vial_exterior' : {
                 'type': 'ply',
+                "face_normals": True,
                 'filename': self.filename_vial_outer,
                 'bsdf': {
                     'type': 'dielectric',
@@ -123,6 +124,7 @@ class CustomVial(Container):
             'vial_interior': {
                 'type': 'ply',
                 'filename': self.filename_vial_inner,
+                "face_normals": True,
                 'bsdf': {
                     'type': 'dielectric',
                     'ext_ior': self.vial_ior,
@@ -131,8 +133,6 @@ class CustomVial(Container):
                 'interior': {"type": "ref", "id": "printing_medium"},
             }
         }
-
-
 
         d = self.add_occlusions(d)
         return d
