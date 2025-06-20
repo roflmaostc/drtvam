@@ -1,8 +1,8 @@
 {
     "vial": {
         "type": "custom",
-        "filename_vial_outer": "cuvette_outer.ply",
-        "filename_vial_inner": "cuvette_inner.ply",
+        "filename_vial_outer": "tests/files/cuvette_outer.ply",
+        "filename_vial_inner": "tests/files/cuvette_inner.ply",
         "ior": 1.4702,
         "medium": {
             "ior": 1.33,
