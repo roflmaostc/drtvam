@@ -3,7 +3,7 @@
         "type": "custom",
         "filename_vial_outer": "cuvette_outer.ply",
         "filename_vial_inner": "cuvette_inner.ply",
-        "ior": 1.52,
+        "ior": 1.4702,
         "medium": {
             "ior": 1.33,
             "phase": {
@@ -24,19 +24,19 @@
     },
     "sensor": {
         "type": "dda",
-        "scalex": 7,
-        "scaley": 7,
-        "scalez": 1,
+        "scalex": 5,
+        "scaley": 5,
+        "scalez": 1.25,
         "film": {
             "type": "vfilm",
             "resx": 100,
             "resy": 100,
-            "resz": 20
+            "resz": 50
         }
     },
     "target": {
         "filename": "tests/files/box_hole.ply",
-        "size": 3.0
+        "size": 4.0
     },
     "loss": {
         "type": "threshold",
