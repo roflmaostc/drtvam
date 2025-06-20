@@ -95,6 +95,49 @@ class IndexMatchedVial(Container):
         d = self.add_occlusions(d)
         return d
 
+class CustomVial(Container):
+    def __init__(self, params):
+        super().__init__(params)
+
+        if "filename_vial_outer" not in params.keys() or "filename_vial_inner" not in params.keys():
+            raise ValueError(f"[{self.__class__.__name__}] Missing fields 'filename_vial_outer' or 'filename_vial_inner' for custom vial.")
+
+        self.vial_ior = params['ior']
+        # it is important that both surface have the normals pointing in the
+        # right directions
+        self.filename_vial_outer = params["filename_vial_outer"]
+        self.filename_vial_inner = params["filename_vial_inner"]
+
+    def to_dict(self):
+        d = {
+            'printing_medium' : self.medium_dict(),
+            'vial_exterior' : {
+                'type': 'ply',
+                "face_normals": True,
+                'filename': self.filename_vial_outer,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'int_ior': self.vial_ior,
+                    'ext_ior': "air",
+                },
+            },
+            'vial_interior': {
+                'type': 'ply',
+                'filename': self.filename_vial_inner,
+                "face_normals": True,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'ext_ior': self.vial_ior,
+                    'int_ior': self.medium_ior,
+                },
+                'interior': {"type": "ref", "id": "printing_medium"},
+            }
+        }
+
+        d = self.add_occlusions(d)
+        return d
+
+
 
 class CylindricalVial(Container):
     def __init__(self, params):
@@ -183,5 +226,6 @@ geometries = {
     'index_matched': IndexMatchedVial,
     'cylindrical': CylindricalVial,
     'square': SquareVial,
+    'custom': CustomVial,
 }
 

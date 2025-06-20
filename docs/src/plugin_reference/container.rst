@@ -203,3 +203,36 @@ spectroscopy cuvette. It takes the following parameters:
       - ``dict``
       - The medium dictionary, as described above.
 
+
+Custom vial (``custom``)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+This container implements a custom shaped vial which
+is specified with two mesh files which define the interior and exterior.
+Be sure that both mesh normals point outward.
+
+
+.. list-table::
+    :widths: 10 10 80
+    :header-rows: 1
+
+    * - Key
+      - Type
+      - Description
+
+    * - ``filename_vial_outer``
+      - ``str``
+      - The path to the mesh file defining the exterior of the vial
+
+    * - ``filename_vial_inner``
+      - ``str``
+      - The path to the mesh file defining the interior of the vial
+
+    * - ``ior``
+      - ``float``
+      - The refractive index of the vial.
+
+    * - ``medium``
+      - ``dict``
+      - The medium dictionary, as described above.
+

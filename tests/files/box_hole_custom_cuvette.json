@@ -1,0 +1,48 @@
+{
+    "vial": {
+        "type": "custom",
+        "filename_vial_outer": "cuvette_outer.ply",
+        "filename_vial_inner": "cuvette_inner.ply",
+        "ior": 1.4702,
+        "medium": {
+            "ior": 1.33,
+            "phase": {
+                "type": "rayleigh"
+            },
+            "extinction": 0.06,
+            "albedo": 0.0
+        }
+    },  
+    "projector": {
+        "type": "collimated",
+        "n_patterns": 200,
+        "resx": 200,
+        "resy": 20,
+        "pixel_size": 50e-3,
+        "motion": "circular",
+        "distance": 20
+    },
+    "sensor": {
+        "type": "dda",
+        "scalex": 5,
+        "scaley": 5,
+        "scalez": 1.25,
+        "film": {
+            "type": "vfilm",
+            "resx": 100,
+            "resy": 100,
+            "resz": 50
+        }
+    },
+    "target": {
+        "filename": "tests/files/box_hole.ply",
+        "size": 4.0
+    },
+    "loss": {
+        "type": "threshold",
+        "tl": 0.9,
+        "tu": 0.97
+    },
+    "progressive": true,
+    "n_steps": 70
+}
