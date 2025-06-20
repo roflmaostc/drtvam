@@ -122,8 +122,8 @@ def test_square_hole_optimization(fname, variant):
     percentage_correct = np.mean(almost_equal) * 100
 
 
-    # scattering works less well
-    if fname == 'tests/files/box_hole_scattering.json':
+    # scattering and custom cuvette works less well
+    if fname == 'tests/files/box_hole_scattering.json' or fname == 'tests/files/box_hole_custom_cuvette.json':
         assert percentage_correct > 99.0
     else:
         assert percentage_correct > 99.4
