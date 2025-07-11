@@ -5,6 +5,18 @@ Being an experimental research framework, Dr.TVAM does not strictly follow the
 `Semantic Versioning <https://semver.org/>`_ convention. That said, we will
 strive to document breaking API changes in the release notes below.
 
+
+Dr.TVAM 0.3.0
+-------------
+*July 11, 2025*
+
+- Make occlusions more generic `[#27] <https://github.com/rgl-epfl/drtvam/pull/27>`
+- Introduce a generic cuvette via meshes `[#30] <https://github.com/rgl-epfl/drtvam/pull/30>`
+- Add option to move target file `[#26] <https://github.com/rgl-epfl/drtvam/pull/26>`
+- Minor fixes for surface aware discretization
+- Some fixes for filter radon
+- Improved histogram export
+
 Dr.TVAM 0.2.0
 -------------
 *March 7, 2025*
