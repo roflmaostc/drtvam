@@ -1,0 +1,53 @@
+{
+    "vial": {
+        "type": "double_cylindrical",
+        "r_ext_outer": 7,
+        "r_int_outer": 6,
+        "r_ext_inner": 3,
+        "r_int_inner": 2,
+        "ior_outer": 1.53,
+        "ior_inner": 1.553,
+        "ior_inside_inner": 1.33,
+        "medium": {
+            "ior": 1.48,
+            "extinction": 0.05,
+            "albedo": 0.0
+    }
+    },
+    "projector": {
+        "type": "collimated",
+        "n_patterns": 200,
+        "resx": 200,
+        "resy": 10,
+        "pixel_size": 75e-3,
+        "motion": "circular",
+        "distance": 20
+    },
+    "sensor": {
+        "type": "dda",
+        "scalex": 14,
+        "scaley": 14,
+        "scalez": 1,
+        "film": {
+            "type": "vfilm",
+            "resx": 50,
+            "resy": 50,
+            "resz": 1
+        }
+    },
+    "target": {
+        "filename": "tests/files/hollow_gear.ply",
+        "size": 8.0
+    },
+        "loss": {
+        "type": "threshold",
+        "tl": 0.6,
+        "tu": 0.85
+    },
+    "progressive": true,
+    "filter_radon": true,
+    "spp": 2,
+    "n_steps": 40,
+    "max_depth": 10
+}
+

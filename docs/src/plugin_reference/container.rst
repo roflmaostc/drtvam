@@ -204,6 +204,59 @@ spectroscopy cuvette. It takes the following parameters:
       - The medium dictionary, as described above.
 
 
+
+
+Double Cylindrical vial (``double_cylindrical``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This container implements a cylindrical vial (outer vial) which contains the medium, with no index-matching bath. 
+Inside that medium is a smaller cylinder (inner vial) placed which itself is filled with another medium.
+The system correctly accounts for the attenuation and change of direction at the
+dielectric interfaces. It takes the following parameters:
+
+
+.. list-table::
+    :widths: 10 10 80
+    :header-rows: 1
+
+    * - Key
+      - Type
+      - Description
+
+    * - ``r_int_outer``
+      - ``float``
+      - The interior radius of the outer vial, in scene units.
+
+    * - ``r_ext_outer``
+      - ``float``
+      - The exterior radius of the outer vial, in scene units.
+
+    * - ``r_int_inner``
+      - ``float``
+      - The interior radius of the inner vial, in scene units.
+
+    * - ``r_ext_inner``
+      - ``float``
+      - The exterior radius of the inner vial, in scene units.
+
+    * - ``ior_outer``
+      - ``float``
+      - The refractive index of the outer vial.
+
+    * - ``ior_inner``
+      - ``float``
+      - The refractive index of the inner vial.
+
+    * - ``ior_inside_inner``
+      - ``float``
+      - The refractive index of the medium inside the inner vial.
+
+    * - ``medium``
+      - ``dict``
+      - The medium dictionary, as described above.
+
+
+
 Custom vial (``custom``)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 

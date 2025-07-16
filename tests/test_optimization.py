@@ -14,6 +14,33 @@ import matplotlib.pyplot as plt
 
 
 
+
+@pytest.mark.parametrize("fname", ['tests/files/double_cylindrical.json'])
+@pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])
+def test_double_cylindrical(fname, variant):
+    mi.set_variant(variant)
+
+    # Load the configuration file
+    with open(fname, 'r') as f:
+        config = json.load(f)
+
+    config['output'] = os.path.dirname(os.path.abspath(fname))
+
+    # Save the configuration file in the output directory
+    os.makedirs(os.path.join(config['output'], "patterns"), exist_ok=True)
+    with open(os.path.join(config['output'], "opt_config.json"), 'w') as f:
+        json.dump(config, f, indent=4)
+
+    vol_final = optimize(config)
+
+    reference = 1.0 * (np.load("tests/files/target_hollow_gear.npy"))
+    almost_equal = np.isclose(reference, 1.0 * (vol_final.numpy() > 0.6))
+    percentage_correct = np.mean(almost_equal) * 100
+    assert percentage_correct > 99.4
+
+
+
+
 @pytest.mark.parametrize("fname", ['tests/files/box_hole_occlusion.json',\
                                    "tests/files/box_hole_occlusion_filter_radon.json"])
 @pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])

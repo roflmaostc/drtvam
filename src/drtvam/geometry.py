@@ -219,6 +219,105 @@ class SquareVial(Container):
         return d
 
 
+class DoubleCylindricalVial(Container):
+    def __init__(self, params):
+        super().__init__(params)
+
+        # ext radius of outer cylinder
+        self.r_ext_outer = params['r_ext_outer']
+        # int radius of outer cylinder
+        self.r_int_outer = params['r_int_outer']
+        # ext radius of inner cylinder
+        self.r_ext_inner = params['r_ext_inner']
+        # int radius of inner cylinder
+        self.r_int_inner = params['r_int_inner']
+
+        self.height = params.get('height', 40.)
+        # refractive index of inner cylinder material
+        self.vial_ior_inner = params['ior_inner']
+        # refractive index of outer cylinder material
+        self.vial_ior_outer = params['ior_outer']
+
+
+        # printin medium
+        medium = params['medium']
+        self.medium_ior = medium['ior']
+        self.sigma_t = medium['extinction']
+        self.albedo = medium['albedo'] # Purely absorptive by default
+        if 'phase' in medium.keys():
+            self.medium_phase = medium['phase']
+        elif self.albedo > 0.:
+            raise ValueError(f"[{self.__class__.__name__}] Tried to load a scattering medium without specifying a phase function.")
+        else:
+            self.medium_phase = None
+
+        self.inside_inner_ior = params['ior_inside_inner']
+
+
+    def medium_dict(self):
+        medium_dict = {
+            'type': 'homogeneous',
+            'sigma_t': self.sigma_t,
+            'albedo': self.albedo,
+            'id': 'printing_medium',
+            }
+        if self.medium_phase is not None:
+            medium_dict['phase'] = self.medium_phase
+        return medium_dict
+
+
+    def to_dict(self):
+        #TODO: add endcaps
+        d = {
+            'printing_medium' : self.medium_dict(),
+            'outer_vial' : {
+                'type': 'cylinder',
+                'p0': [0., 0., -0.5 * self.height],
+                'p1': [0., 0.,  0.5 * self.height],
+                'radius': self.r_ext_outer,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'int_ior': self.vial_ior_outer,
+                },
+            },
+            'outer_vial_interior': {
+                'type': 'cylinder',
+                'p0': [0., 0., -0.5 * self.height],
+                'p1': [0., 0.,  0.5 * self.height],
+                'radius': self.r_int_outer,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'ext_ior': self.vial_ior_outer,
+                    'int_ior': self.medium_ior,
+                },
+                'interior': {"type": "ref", "id": "printing_medium"},
+            },
+            'inner_vial' : {
+                'type': 'cylinder',
+                'p0': [0., 0., -0.5 * self.height],
+                'p1': [0., 0.,  0.5 * self.height],
+                'radius': self.r_ext_inner,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'ext_ior': self.medium_ior,
+                    'int_ior': self.vial_ior_inner,
+                },
+                'exterior': {"type": "ref", "id": "printing_medium"},
+            },
+            'inner_vial_interior': {
+                'type': 'cylinder',
+                'p0': [0., 0., -0.5 * self.height],
+                'p1': [0., 0.,  0.5 * self.height],
+                'radius': self.r_int_inner,
+                'bsdf': {
+                    'type': 'dielectric',
+                    'ext_ior': self.vial_ior_inner,
+                    'int_ior': self.inside_inner_ior
+                }
+            }
+        }
+        d = self.add_occlusions(d)
+        return d
 
 
 # List of registered geometries
@@ -227,5 +326,6 @@ geometries = {
     'cylindrical': CylindricalVial,
     'square': SquareVial,
     'custom': CustomVial,
+    'double_cylindrical': DoubleCylindricalVial
 }
 
