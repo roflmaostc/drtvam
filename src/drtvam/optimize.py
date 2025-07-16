@@ -281,13 +281,13 @@ def optimize(config):
     # params['projector.active_data'] = data
     params['projector.active_data'] = dr.ones(mi.UInt32, 7) * 100
     params['projector.active_pixels'] = dr.zeros(mi.UInt32, 7)
-    params['projector.active_pixels'][0] = 800 * 250 + 400
-    params['projector.active_pixels'][1] = 800 * 250 + 400 - 100
-    params['projector.active_pixels'][2] = 800 * 250 + 400 + 100
-    params['projector.active_pixels'][3] = 800 * 250 + 400 - 200
-    params['projector.active_pixels'][4] = 800 * 250 + 400 + 200
-    params['projector.active_pixels'][5] = 800 * 250 + 400 - 300
-    params['projector.active_pixels'][6] = 800 * 250 + 400 + 300
+    params['projector.active_pixels'][0] = 740 * 350 +370
+    params['projector.active_pixels'][1] = 740 * 350 +370  - 100
+    params['projector.active_pixels'][2] = 740 * 350 +370  + 100
+    params['projector.active_pixels'][3] = 740 * 350 +370  - 200
+    params['projector.active_pixels'][4] = 740 * 350 +370  + 200
+    params['projector.active_pixels'][5] = 740 * 350 +370  - 300
+    params['projector.active_pixels'][6] = 740 * 350 +370  + 300
 
     # params['projector.active_pixels'][0] = 800 * 250 + 400
     # params['projector.active_pixels'][1] = 800 * 250 + 400 + 50
