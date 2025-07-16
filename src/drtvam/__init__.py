@@ -21,7 +21,11 @@ def plugin_variant_callback(old, new):
 mi.detail.add_variant_callback(plugin_variant_callback)
 from . import integrators
 
-mi.set_variant('cuda_ad_mono', 'llvm_ad_mono')
+# see https://github.com/mitsuba-renderer/mitsuba3/pull/1522
+try:
+    mi.set_variant('cuda_ad_mono', 'llvm_ad_mono')
+except:
+    mi.set_variant('llvm_ad_mono')
 
 from . import geometry, motion, loss
 
