@@ -56,7 +56,7 @@ def save_histogram(vol, target, filename, efficiency, max_pattern_intensity):
 
     # test a range from 0 to 1.3
     print("Finding threshold for best IoU ...")
-    thresholds = np.linspace(0, 1.3, 1000)
+    thresholds = np.linspace(0, 1.3, 300)
     ious = [iou_loss(vol, target, t)[0] for t in tqdm(thresholds)]
     iou = max(ious)
     best_threshold = np.argmax(np.array(ious))
