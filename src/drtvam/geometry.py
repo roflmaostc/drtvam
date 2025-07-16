@@ -77,7 +77,7 @@ class IndexMatchedVial(Container):
         super().__init__(params)
 
         self.r = params['r']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 40.)
 
     def to_dict(self):
         d = {
@@ -145,7 +145,7 @@ class CylindricalVial(Container):
 
         self.r_int = params['r_int']
         self.r_ext = params['r_ext']
-        self.height = params.get('height', 20.)
+        self.height = params.get('height', 40.)
         self.vial_ior = params['ior']
 
 
@@ -252,18 +252,6 @@ class DoubleCylindricalVial(Container):
             self.medium_phase = None
 
         self.inside_inner_ior = params['ior_inside_inner']
-
-
-    def medium_dict(self):
-        medium_dict = {
-            'type': 'homogeneous',
-            'sigma_t': self.sigma_t,
-            'albedo': self.albedo,
-            'id': 'printing_medium',
-            }
-        if self.medium_phase is not None:
-            medium_dict['phase'] = self.medium_phase
-        return medium_dict
 
 
     def to_dict(self):
