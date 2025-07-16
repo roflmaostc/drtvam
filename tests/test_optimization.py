@@ -40,7 +40,6 @@ def test_double_cylindrical(fname, variant):
 
 
 
-
 @pytest.mark.parametrize("fname", ['tests/files/box_hole_occlusion.json',\
                                    "tests/files/box_hole_occlusion_filter_radon.json"])
 @pytest.mark.parametrize("variant", ["cuda_ad_mono", "llvm_ad_mono"])
