@@ -10,12 +10,13 @@ Dr.TVAM 0.3.0
 -------------
 *July 11, 2025*
 
-- Make occlusions more generic `[#27] <https://github.com/rgl-epfl/drtvam/pull/27>`
-- Introduce a generic cuvette via meshes `[#30] <https://github.com/rgl-epfl/drtvam/pull/30>`
-- Add option to move target file `[#26] <https://github.com/rgl-epfl/drtvam/pull/26>`
+- Make occlusions more generic `[#27] <https://github.com/rgl-epfl/drtvam/pull/27>`_
+- Introduce a generic cuvette via meshes `[#30] <https://github.com/rgl-epfl/drtvam/pull/30>`_
+- Add option to move target file `[#26] <https://github.com/rgl-epfl/drtvam/pull/26>`_
 - Minor fixes for surface aware discretization
 - Some fixes for filter radon
 - Improved histogram export
+- Add double cyclindrical vials `[#27] <https://github.com/rgl-epfl/drtvam/pull/37>`_ 
 
 Dr.TVAM 0.2.0
 -------------
