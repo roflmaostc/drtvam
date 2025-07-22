@@ -195,6 +195,52 @@ class CollimatedProjector(TVAMProjector):
                 f'    sampler = {self.m_sampler},\n'
                 ']')
 
+
+class TelecentricProjector(TVAMProjector):
+    def __init__(self, props):
+        super().__init__(props)
+
+        self.pixel_size = props['pixel_size']
+        self.aperture_radius = props['aperture_radius']
+        self.focus_distance = props['focus_distance']
+
+
+        if isinstance(self.pixel_size, float): # Should this go to subclasses ?
+            self.pixel_size = mi.Point2f(self.pixel_size)
+        elif not isinstance(self.pixel_size, mi.Point2f):
+            raise ValueError("[self.__class__.__name__] pixel_size must be a float or a Point2f")
+
+        self.emitter_size = self.res * self.pixel_size
+        aspect = self.res.x / self.res.y
+        camera_to_sample = mi.orthographic_projection(self.res, self.res, mi.ScalarPoint2i(0), 1e-2, 1e4)
+        scale = mi.Transform4f().scale(0.5 * mi.Point3f(self.emitter_size.x, self.emitter_size.y * aspect, 1.))
+
+        self.sample_to_camera = scale @ camera_to_sample.inverse()
+
+    def get_ray(self, position_sample, aperture_sample):
+        origin = self.sample_to_camera @ mi.Point3f(position_sample.x, position_sample.y, 0.)
+        scaled_aperture_sample = self.aperture_radius * mi.warp.square_to_uniform_disk_concentric(aperture_sample)
+        # go from the origin to the aperture with distance d in negative
+        moved_scaled_aperture_sampled = mi.Vector3f(scaled_aperture_sample.x, scaled_aperture_sample.y, -self.focus_distance)
+
+        direction = dr.normalize(moved_scaled_aperture_sampled - origin)
+
+        active_area = dr.prod(self.pixel_size) * len(self.active_data)
+        return origin, direction, active_area
+
+    def to_string(self):
+        return ('TelecentricProjector[\n'
+                f'    pattern count = {self.n_patterns},\n'
+                f'    pattern resolution = {self.res},\n'
+                f'    emitter_size = {self.emitter_size},\n'
+                f'    sampler = {self.m_sampler},\n',
+                f'    pixel size = {self.pixel_size},\n',
+                f'    aperture radius = {self.aperture_radius},\n',
+                f'    focus distance = {self.focus_distance},\n',
+                ']')
+
+
+
 class LensProjector(TVAMProjector):
     def __init__(self, props):
         super().__init__(props)
@@ -235,7 +281,8 @@ class LensProjector(TVAMProjector):
                 f'    sampler = {self.m_sampler},\n'
                 ']')
 
+
 #TODO: unit tests
 mi.register_emitter('collimated', CollimatedProjector)
 mi.register_emitter('lens', LensProjector)
-
+mi.register_emitter('telecentric', TelecentricProjector)
