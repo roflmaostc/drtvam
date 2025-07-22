@@ -63,6 +63,9 @@ differentiable rendering to optimize patterns for TVAM. In particular, it suppor
 For more details we refer to this [publication](https://rgl.s3.eu-central-1.amazonaws.com/media/papers/Nicolet2024Inverse.pdf).
 
 
+## Overprinting
+We have recently extended this project to describe also a variety of overprinting scenarios. See [Overprinting with Tomographic Volumetric Additive Manufacturing](https://github.com/EPFL-LAPD/Overprinting-with-Tomographic-Volumetric-Additive-Manufacturing).
+
 ## ⚠️ Sign up for online workshop in late summer 2025
 * The date is not announced yet, but sign up for the announcement: [here](https://forms.office.com/e/3E0SeYUR1X?origin=lprLink)
 
@@ -152,6 +155,17 @@ When using this project in academic works, please cite the following paper:
     year = {2024},
     month = dec,
     doi = {10.1145/3687924}
+}
+
+
+@misc{wechsler_2025_overprinting_TVAM,
+      title={Overprinting with Tomographic Volumetric Additive Manufacturing}, 
+      author={Felix Wechsler and Viola Sgarminato and Riccardo Rizzo and Baptiste Nicolet and Wenzel Jakob and Christophe Moser},
+      year={2025},
+      eprint={2507.13842},
+      archivePrefix={arXiv},
+      primaryClass={physics.optics},
+      url={https://arxiv.org/abs/2507.13842}, 
 }
 ```
 
