@@ -219,25 +219,22 @@ class TelecentricProjector(TVAMProjector):
 
     def get_ray(self, position_sample, aperture_sample):
         origin = self.sample_to_camera @ mi.Point3f(position_sample.x, position_sample.y, 0.)
-        scaled_aperture_sample = self.aperture_radius * mi.warp.square_to_uniform_disk_concentric(aperture_sample)
-        # go from the origin to the aperture with distance d in negative
-        moved_scaled_aperture_sampled = mi.Vector3f(scaled_aperture_sample.x, scaled_aperture_sample.y, -self.focus_distance)
 
-        direction = dr.normalize(moved_scaled_aperture_sampled - origin)
+        # we sample from an aperture with the aperture radius
+        scaled_aperture_sample = self.aperture_radius * mi.warp.square_to_uniform_disk_concentric(aperture_sample)
+        # then we start the ray from within the aperture but we offset with the
+        # respective pixel position
+        scaled_aperture_sample_p = mi.Point3f(origin.x + scaled_aperture_sample.x, origin.y + scaled_aperture_sample.y, 0.0)
+
+        # we need to specify the correct direction of the ray
+        moved_scaled_aperture_sample = mi.Point3f(origin.x + scaled_aperture_sample.x, origin.y + scaled_aperture_sample.y, -self.focus_distance)
+        direction = dr.normalize(-moved_scaled_aperture_sample + origin)
 
         active_area = dr.prod(self.pixel_size) * len(self.active_data)
-        return origin, direction, active_area
+        return scaled_aperture_sample_p, direction, active_area
 
     def to_string(self):
-        return ('TelecentricProjector[\n'
-                f'    pattern count = {self.n_patterns},\n'
-                f'    pattern resolution = {self.res},\n'
-                f'    emitter_size = {self.emitter_size},\n'
-                f'    sampler = {self.m_sampler},\n',
-                f'    pixel size = {self.pixel_size},\n',
-                f'    aperture radius = {self.aperture_radius},\n',
-                f'    focus distance = {self.focus_distance},\n',
-                ']')
+        return ('TelecentricProjector')
 
 
 
