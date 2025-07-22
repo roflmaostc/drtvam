@@ -76,6 +76,10 @@ Installing Dr.TVAM can be done via `pip`:
 ```bash=
 pip install drtvam
 ```
+or the current development version
+```bash=
+pip install git+https://github.com/rgl-epfl/drtvam
+```
 
 ## Basic Usage
 
