@@ -123,7 +123,6 @@ We have done some simple benchmarks:
 | --- | --- | --- | --- |
 | Julia Radon based | 1 | **0h 3m 17s** |  |
 | Dr. TVAM index-matched | 1 | **0h 2m 2s** | **0h 0m 20s** |
-| Dr. TVAM index-matched | 1 | **0h 2m 2s** | **0h 0m 20s** |
 | Dr. TVAM cylindrical | 1 | **0h 2m 10s** | **0h 0m 23s** |
 | Dr. TVAM square | 1 | **0h 2m 15s** | **0h 0m 20s** |
 | Dr. TVAM cylindrical scattering | 16 | **1h 40m 0s** | **0h 14m 10s** |
