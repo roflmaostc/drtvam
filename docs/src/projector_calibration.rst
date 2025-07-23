@@ -75,10 +75,7 @@ The following example shows how to trace rays for a single projector pixel.
                 "intensity": 1
             }
         ],
-        "spp": 800,
-        "spp_final": 800,
-        "spp_grad": 800,
-        "spp_ref": 800
+        "spp_ref": 10000
     }
 
 
@@ -91,5 +88,12 @@ hence the output will be 1000x1000 pixels with a pixel size of 0.0152 mm.
 Since the refractive index of the vial is 1.0, the rays will not be refracted and will travel in a straight line, as expected in air.
 The rays are attenuated by the extinction coefficient of the medium, which is set to 0.1.
 
+The target is irrelevant for this example, but it is required to run the simulation.
+
+We shoot a total of 10000 rays per pixel, as defined by the ``spp_ref`` parameter. It is possible to change this value to increase or decrease the number of rays per pixel. It makes the results more accurate.
+Note, in an optimization, increasing the ``spp`` parameters to such high values, will result in very long optimizations. So values around 100 are more realistic and sufficient for most applications.
 
 
+Calibration a real ``lens`` projector
+-------------------------------------
+This example shows how to calibrate a :ref:`real lens projector <lens_projector>` setup.

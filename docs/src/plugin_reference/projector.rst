@@ -159,6 +159,7 @@ Below, we detail the two types of projectors available in Dr.TVAM.
 
 Collimated Projector (``collimated``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _collimated_projector:
 
 This plugin models a perfectly collimated projector, i.e. the light rays are
 parallel to each other. It requires the following additional parameters:
@@ -198,6 +199,7 @@ Example usage within `config.json`:
 
 Telecentric Projector (``telecentric``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _telecentric_projector:
 
 This plugin implements a telecentric projector with an aperture. 
 For an ``aperture_radius = 0`` it simplifies to the ``collimated`` projector.
@@ -251,6 +253,7 @@ The parameters ``spp``, ``spp_ref`` and ``spp_grad`` need to be changed, as show
 
 Lens Projector (``lens``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _lens_projector:
 
 This plugin implements a projector with a spherical lens, and an aperture. It
 requires the following additional parameters:
