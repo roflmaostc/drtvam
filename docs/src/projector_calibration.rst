@@ -91,7 +91,8 @@ The rays are attenuated by the extinction coefficient of the medium, which is se
 The target is irrelevant for this example, but it is required to run the simulation.
 
 We shoot a total of 10000 rays per pixel, as defined by the ``spp_ref`` parameter. It is possible to change this value to increase or decrease the number of rays per pixel. It makes the results more accurate.
-Note, in an optimization, increasing the ``spp`` parameters to such high values, will result in very long optimizations. So values around 100 are more realistic and sufficient for most applications.
+Note, in an optimization, increasing the ``spp`` parameters to such high values, will result in very long optimizations. 
+So values around 100 (``spp=100``, ``spp_ref=100`` and ``spp_grad=100``) are more realistic and sufficient for most applications.
 
 
 Calibration a real ``lens`` projector
