@@ -289,3 +289,68 @@ Be sure that both mesh normals point outward.
       - ``dict``
       - The medium dictionary, as described above.
 
+
+
+Occlusions
+----------
+We support one or several occlusions inside the medium which can be fully absorptive, transparent or scattering.
+In fact we support all `Bidirectional Scattering Distribution Functions (BSDFs) <https://mitsuba.readthedocs.io/en/stable/src/generated/plugins_bsdfs.html>`_ that Mitsuba 3 supports.
+The occlusions are defined in the ``occlusions`` list of the container dictionary. By default the occlusions are fully absorptive, but you can specify a different BSDF for each occlusion.
+
+
+Fully absorptive occlusion
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. code-block:: json
+
+    "vial": {
+        "type": "cylindrical",
+        "r_int": 6.363125,
+        "r_ext": 7.354374999999999,
+        "ior": 1.54,
+        "medium": {
+            "ior": 1.4849,
+            "phase": {"type": "rayleigh"},
+            "extinction": 0.1450628608586249,
+            "albedo": 0.0
+        },
+        "occlusions": [
+            {
+                "filename": "fully_absorptive.ply"
+            }
+        ]
+    },
+
+BSDF specified occlusion
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: json
+
+    "vial": {
+        "type": "square",
+        "w_int": 10.191,
+        "w_ext": 12.408,
+        "ior": 1.54,
+        "medium": {
+            "ior": 1.3512,
+            "phase": {
+                "type": "hg",
+                "g": 0.95
+            },
+            "extinction": 0.036657,
+            "albedo": 0.0
+        },
+        "occlusions": [
+            {
+                "filename": "plastic_piece.ply",
+                "bsdf": {
+                    "type": "dielectric",
+                    "int_ior": 1.58,
+                    "ext_ior": 1.4849
+                }
+            },
+            {
+                "filename":"fully_absorptive.ply"
+            }
+        ]
+    }
