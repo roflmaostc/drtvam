@@ -47,7 +47,7 @@
     "progressive": true,
     "filter_radon": true,
     "spp": 2,
-    "n_steps": 40,
+    "n_steps": 30,
     "max_depth": 10
 }
 

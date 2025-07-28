@@ -48,5 +48,5 @@
     "spp": 4,
     "spp_grad": 16,
     "progressive": true,
-    "n_steps": 40
+    "n_steps": 30
 }
