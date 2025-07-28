@@ -55,10 +55,15 @@ Dr.TVAM is a high-performance inverse rendering framework for tomographic volume
 manufacturing. It is based on the [Mitsuba renderer](https://www.mitsuba-renderer.org/), and uses physically-based
 differentiable rendering to optimize patterns for TVAM. In particular, it supports:
 
-- Printing in scattering media
-- Arbitrary vial shapes (round, square, ...)
-- Arbitrary projector motions (orthogonal, tilted)
-- An improved discretization scheme for the target shape to reduce computational load and to minimize discretization artifacts
+* Printing in scattering media. 
+* Printing with arbitrary container geometry (round, square, ...), or
+  occluding objects (e.g. overprinting), with correct handling of the light
+  transport. 
+* Printing with a variety of projection models, and an arbitrary
+  container motion. 
+* Optimizing patterns for TVAM with our surface-aware
+  discretization.
+
 
 For more details we refer to this [publication](https://rgl.s3.eu-central-1.amazonaws.com/media/papers/Nicolet2024Inverse.pdf).
 
@@ -156,7 +161,7 @@ When using this project in academic works, please cite the following paper:
     volume = {43},
     number={6},
     year = {2024},
-    month = dec,
+    month = {12},
     doi = {10.1145/3687924}
 }
 

@@ -6,7 +6,7 @@
 Dr.TVAM
 =======
 
-Dr.TVAM is an inverse rendering framework for tomographic additive
+`Dr.TVAM <https://github.com/rgl-epfl/drtvam>`_ is an inverse rendering framework for tomographic additive
 manufacturing. It provides a set of tools to model a TVAM printing process and
 optimize projection patterns for it. It is implemented in Python on top of the
 `Mitsuba 3 <https://github.com/mitsuba-renderer/mitsuba3>`_ framework.
@@ -15,7 +15,7 @@ It is possible to use Dr.TVAM to setup a wide variety of experiments. In
 particular, we support:
 
 * Printing in scattering media. 
-* Printing with arbitrary container geometry, or
+* Printing with arbitrary container geometry (round, square, ...), or
   occluding objects (e.g. overprinting), with correct handling of the light
   transport. 
 * Printing with a variety of projection models, and an arbitrary
@@ -32,6 +32,12 @@ We recommend installing Dr.TVAM directly with ``pip``:
 .. code-block:: bash
 
     pip install drtvam
+
+Or the current development version with ``pip``:
+
+.. code-block:: bash
+
+    pip install https://github.com/rgl-epfl/drtvam
 
 Alternatively, you can clone the repository and install it manually:
 
@@ -70,7 +76,7 @@ under any circumstances for commercial purposes.
 Citation
 --------
 
-When using Dr.TVAM in academic projects, please cite the associated paper:
+When using Dr.TVAM in academic projects, please cite the associated publications:
 
 .. code-block:: bibtex
 
@@ -81,8 +87,18 @@ When using Dr.TVAM in academic projects, please cite the associated paper:
         volume = {43},
         number={6},
         year = {2024},
-        month = dec,
+        month = {12},
         doi = {10.1145/3687924}
+    }
+
+    @misc{wechsler_2025_overprinting_TVAM,
+      title={Overprinting with Tomographic Volumetric Additive Manufacturing}, 
+      author={Felix Wechsler and Viola Sgarminato and Riccardo Rizzo and Baptiste Nicolet and Wenzel Jakob and Christophe Moser},
+      year={2025},
+      eprint={2507.13842},
+      archivePrefix={arXiv},
+      primaryClass={physics.optics},
+      url={https://arxiv.org/abs/2507.13842}, 
     }
 
 .. .............................................................................
