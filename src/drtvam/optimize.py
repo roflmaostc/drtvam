@@ -221,11 +221,23 @@ def optimize(config):
     loss_hist = np.zeros(n_steps)
     timing_hist = np.zeros((n_steps, 2))
 
+    integrator_final = mi.load_dict({
+        'type': 'volume',
+        'max_depth': 16,
+        'rr_depth': 8,
+        'transmission_only': transmission_only,
+        'regular_sampling': regular_sampling,
+        'print_time': time
+    })
+
+
+
     if "psf_analysis" in config:
-        print("Exporting single ray tracing...")
+        print("\nPSF analysis enabled.")
+        print("Exporting ray tracing...")
         # we simply loop over the entries specified in the json
         number_rays_psf = len(config["psf_analysis"])
-        print(number_rays_psf)
+        print("Number of traced pixels:", number_rays_psf)
         params['projector.active_data'] = dr.ones(mi.UInt32, number_rays_psf)
         params['projector.active_pixels'] = dr.zeros(mi.UInt32, number_rays_psf)
 
@@ -242,7 +254,24 @@ def optimize(config):
             params['projector.active_data'][i] *= entry["intensity"]
 
         params.update()
+        print("Rendering final state...")
+        vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
 
+        np.save(os.path.join(output, "final.npy"), vol_final.numpy())
+        save_vol(vol_final, os.path.join(output, "final.exr"))
+
+        np.save(os.path.join(output, "loss.npy"), loss_hist)
+        np.save(os.path.join(output, "timing.npy"), timing_hist)
+
+        imgs_final = scene.emitters()[0].patterns()
+        dr.eval(imgs_final)
+
+        print("Saving images...")
+        for i in trange(imgs_final.shape[0]):
+            save_img(imgs_final[i], os.path.join(output, "patterns", f"{i:04d}.exr"))
+        np.savez_compressed(os.path.join(output, "patterns.npz"), patterns=imgs_final.numpy())
+
+        return vol_final
     else:
         print("Optimizing patterns...")
         for i in trange(n_steps):
@@ -284,14 +313,6 @@ def optimize(config):
                 timing_hist[i, 1] = sum([h['execution_time'] for h in dr.kernel_history() if h['type'] == dr.KernelType.JIT])
         params.update(opt)
 
-    integrator_final = mi.load_dict({
-        'type': 'volume',
-        'max_depth': 16,
-        'rr_depth': 8,
-        'transmission_only': transmission_only,
-        'regular_sampling': regular_sampling,
-        'print_time': time
-    })
 
     print("Rendering final state...")
     vol_final = mi.render(scene, params, spp=spp_ref, integrator=integrator_final, sensor=final_sensor)
