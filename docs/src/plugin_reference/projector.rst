@@ -256,7 +256,7 @@ Lens Projector (``lens``)
 .. _lens_projector:
 
 This plugin implements a projector with a spherical lens, and an aperture. It
-requires the following additional parameters:
+requires the following additional parameters.
 
 .. list-table::
     :widths: 10 10 80
@@ -299,3 +299,12 @@ Example usage within `config.json`:
     },
 
 In this case the chief rays are not parallel to each other. This system is best calibrated with experimental capture of the patterns (from the side or above).
+
+As the lens projector is unintuitive to use, a schematic representation of the light rays is provided here:
+
+.. image:: ../resources/setup_lens_rays.png
+  :width: 600
+
+
+See :ref:`projector_calibration` for more information on how to calibrate the ``lens`` projector.
+
