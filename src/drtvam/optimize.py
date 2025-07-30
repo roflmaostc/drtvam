@@ -194,7 +194,7 @@ def optimize(config):
     loss_fn = losses[loss_type](config['loss'])
 
     if 'optimizer' not in config.keys():
-        print("No optimizer specified. Using L-BFGS.")
+        print("No optimizer specified. Using linear L-BFGS.")
         config['optimizer'] = {'type': 'lbfgs'}
 
     optim_type = config['optimizer'].pop('type')
