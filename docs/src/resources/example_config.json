@@ -8,12 +8,12 @@
             "ior": 1.49,
             "phase": {"type": "rayleigh"},
             "extinction": 0.1,
-            "albedo": 0.5
+            "albedo": 0.0
         }
     },
     "projector": {
         "type": "collimated",
-        "n_patterns": 1000,
+        "n_patterns": 200,
         "resx": 720,
         "resy": 1080,
         "cropx": 256,
@@ -45,5 +45,8 @@
     },
     "progressive": true,
     "filter_radon": true,
-    "n_steps": 40
+    "n_steps": 20,
+    "spp": 8,
+    "spp_ref": 32,
+    "spp_grad": 8 
 }

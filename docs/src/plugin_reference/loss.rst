@@ -53,7 +53,7 @@ L2 Loss (``L2Loss``)
 This loss function computes the squared error between the predicted and target
 values.
 It requires no additional parameter. We do not recommend using this loss as 
-the ThresholdedLoss provides a better results and control.
+the ``ThresholdedLoss`` provides better results and allows for finer control.
 
 Thresholded loss (``ThresholdedLoss``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
