@@ -134,39 +134,39 @@ The following config files generates the traces of singles rays through a cylind
     {
         "vial": {
             "type": "cylindrical",
-            "r_int": 6,
-            "r_ext": 7,
-            "ior": 1.5,
+            "r_int": 6.363,
+            "r_ext": 7.354,
+            "ior": 1.54,
             "medium": {
-                "ior": 1.5,
+                "ior": 1.4847,
                 "phase": {
                     "type": "rayleigh"
                 },
-                "extinction": 0.1,
+                "extinction": 0.11512925464970229,
                 "albedo": 0.0
             }
         },
         "projector": {
             "type": "lens",
-            "n_patterns": 400,
+            "n_patterns": 1,
             "resx": 740,
             "resy": 700,
-            "fov": 5.58,
-            "aperture_radius": 4.0,
-            "focus_distance": 152.0,
+            "fov": 5.57,
+            "aperture_radius": 2.1,
+            "focus_distance":  152,
             "motion": "circular",
             "distance": 150
         },
         "sensor": {
             "type": "dda",
-            "scalex": 15.2,
-            "scaley": 15.2,
-            "scalez": 15.2,
+            "scalex": 18.90,
+            "scaley": 18.90,
+            "scalez": 18.90,
             "film": {
                 "type": "vfilm",
                 "resx": 1000,
                 "resy": 1000,
-                "resz": 1
+                "resz": 1 
             }
         },
         "target": {
@@ -181,43 +181,121 @@ The following config files generates the traces of singles rays through a cylind
                 "intensity": 1
             },
             {
-                "x": 0,
+                "x": 270,
                 "y": 350,
                 "index_pattern": 0,
                 "intensity": 1
             },
             {
-                "x": 739,
+                "x": 170,
+                "y": 350,
+                "index_pattern": 0,
+                "intensity": 1
+            },
+            {
+                "x": 470,
+                "y": 350,
+                "index_pattern": 0,
+                "intensity": 1
+            },
+            {
+                "x": 570,
+                "y": 350,
+                "index_pattern": 0,
+                "intensity": 1
+            },
+            {
+                "x": 670,
+                "y": 350,
+                "index_pattern": 0,
+                "intensity": 1
+            },
+            {
+                "x": 70,
                 "y": 350,
                 "index_pattern": 0,
                 "intensity": 1
             }
+    
         ],
-        "spp_ref": 10000
+        "spp_ref": 8000
     }
+
 
 .. raw:: html
 
    </details>
 
 
-Running ``drtvam this_config.json`` will generate the traces of the rays through the vial.
 
-<insert picture of generated image>
+
+Running ``drtvam this_config.json`` will generate the traces of the rays through the vial. The output in ``final.exr`` should look like this:
+
+
+.. image:: resources/psf_simulation.png
+    :width: 600
 
 
 In experiment we capture similar traces through a glass vial filled with a medium. To make the trace visible we use fluorescent dye in the medium.
 It is important to determine the pixel size of the experimental camera in the focal plane (your imaging system might be not telecentric).
 Further, the projected pixels in the real setup should hit the vial as close as possible to the vertical end of the vial. Otherwise there is geometric distortion in the image because of the refractive 
 index mismatch between the medium and the air.
+We then overlay the experimental image with the simulated traces to find the best fit of the simulated traces to the experimental image.
+The strategy is to rotate and move (do not scale) the setup image over the simulated traces until the best fit is found. Then we save the experimental image as new picture.
+With the following Python script we can overlay the experimental image with the simulated traces.
 
-An experimental capture image could look like this
+.. raw:: html
 
-<insert picture of setup>
+   <details>
+   <summary><a>Helper script to overlay experimental image with simulated traces (click to expand)</a></summary>
 
+.. code-block:: python
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import imageio
+    
+    # last dimension is singleton and has no meaning
+    img = np.load('final.npy')[:, :, :, 0]
+    
+    img_from_top = np.sum(img, axis=0)
+    
+    # here we should load our reference images from the real setups
+    # load setup.bmp
+    img_from_top_setup = imageio.imread('setup.bmp')
+    
+    
+    # plot the images and also make another row with overlay images
+    # top with setup each. Overlay in matplotlib with alpha and colors
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 3, 1)
+    plt.imshow(img_from_top)
+    plt.title('Image from Top')
+    plt.subplot(1, 3, 2)
+    plt.imshow(img_from_top_setup, alpha=0.5, cmap='gray')
+    plt.title('Image from Setup')
+    
+    # overlay
+    plt.subplot(1, 3, 3)
+    plt.imshow(img_from_top_setup, cmap='gray')
+    plt.imshow(img_from_top, alpha=0.5, cmap='jet')
+    plt.title('Overlay Image')
+    
+    plt.tight_layout()
+    plt.show()
+
+
+.. raw:: html
+   
+   </details>
 
 With the following helper script, we can overlay the experimental image with the simulated traces. By running ``drtvam`` and adapting the parameters, we can find the best fit of the simulated traces to the experimental image.
+The resulting image is shown in the figure below.
 
+.. image:: resources/psf_calibration.png
+    :width: 900
+
+By tweaking the parameters in the config file and running ``drtvam config_psf.json; python overlay.py`` we can find the best fit of the simulated traces to the experimental image in a couple of iterations.
 
 
 Calibration of a ``collimated`` projector
