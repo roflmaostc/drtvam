@@ -16,7 +16,9 @@ Dr.TVAM 0.3.0
 - Minor fixes for surface aware discretization
 - Some fixes for filter radon
 - Improved histogram export
-- Add double cyclindrical vials `[#27] <https://github.com/rgl-epfl/drtvam/pull/37>`_ 
+- Add double cyclindrical vials `[#37] <https://github.com/rgl-epfl/drtvam/pull/37>`_ 
+- Add `telecentric` imaging system as projector `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
+- Add option to trace single pixels `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
 
 Dr.TVAM 0.2.0
 -------------
