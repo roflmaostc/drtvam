@@ -9,6 +9,7 @@ strive to document breaking API changes in the release notes below.
 Dr.TVAM 0.3.1
 -------------
 *August 4, 2025*
+
 - Add `telecentric` imaging system as projector `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
 - Add option to trace single pixels `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
 
