@@ -6,7 +6,7 @@ name = "drtvam"
 version = "0.3.0"
 authors = [
   { name="Baptiste Nicolet", email="baptiste.nicolet@epfl.ch" },
-  { name="Felix Wechsler", email="fxw+git@epfl.ch" },
+  { name="Felix Wechsler", email="fxw+git@mailbox.org" },
 ]
 description = "An inverse rendering framework for tomographic volumetric additive manufacturing"
 readme = "README.md"
