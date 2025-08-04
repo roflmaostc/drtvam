@@ -223,8 +223,8 @@ def optimize(config):
 
     integrator_final = mi.load_dict({
         'type': 'volume',
-        'max_depth': 16,
-        'rr_depth': 8,
+        'max_depth': config.get('max_depth_ref', 16),
+        'rr_depth': config.get('rr_depth_ref', 8),
         'transmission_only': transmission_only,
         'regular_sampling': regular_sampling,
         'print_time': time
