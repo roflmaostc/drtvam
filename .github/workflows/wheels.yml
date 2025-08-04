@@ -22,15 +22,15 @@ jobs:
       ###########################################################
       # Setup local environment (source code, build requirements)
       ###########################################################
-      - uses: Wandalen/wretry.action@v1.2.0
+      - uses: Wandalen/wretry.action@v3.0.0
         with:
-          action: actions/checkout@v3
+          action: actions/checkout@v4
           with: |
             submodules: recursive
           attempt_limit: 3
           attempt_delay: 2000
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
           python-version: '3.10'
@@ -41,11 +41,10 @@ jobs:
       - name: Install build dependencies
         run: |
           pip install --upgrade pip build
-      
+
       - name: Build wheel
         run: |
           python -m build --wheel --outdir wheelhouse
-
 
       - uses: actions/upload-artifact@v4
         with:
@@ -68,7 +67,7 @@ jobs:
           merge-multiple: true
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@v1.10.2
+      - uses: pypa/gh-action-pypi-publish@v1.12.2
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
