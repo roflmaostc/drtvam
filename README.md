@@ -177,4 +177,5 @@ When using this project in academic works, please cite the following paper:
 }
 ```
 
-
+## Release
+See the [release notes](https://github.com/rgl-epfl/drtvam/blob/main/docs/src/release_notes.rst) to keep up with the changes.
