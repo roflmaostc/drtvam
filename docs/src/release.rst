@@ -1,6 +1,8 @@
 How to make a new release?
 --------------------------
 
+0. Update the version number in ``pyproject.toml``
+
 1. Update the ``mitsuba`` dependency version in ``pyproject.toml`` if required.
 
 2. Ensure that the changelog is up to date in ``docs/src/release_notes.rst``.
