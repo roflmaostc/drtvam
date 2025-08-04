@@ -242,9 +242,20 @@ class LensProjector(TVAMProjector):
     def __init__(self, props):
         super().__init__(props)
 
-        self.fov = props['fov'] #TODO: use another parameterization based on focal length and sensor size
         self.aperture_radius = props['aperture_radius']
         self.focus_distance = props['focus_distance']
+
+        assert not ('fov' in props and 'pixel_size' in prop), "Specify either \'fov\' or \'pixel_size\', not both."
+
+        # two different conventions both can be used
+        if 'fov' in props:
+            self.fov = props['fov']
+
+        if 'pixel_size' in props:
+            self.pixel_size = props['pixel_size']
+            # it holds that:
+            # pixel_size * N_x = tan(fov / 2) * 2 * focus_distance
+            self.fov = 2 * np.atan(self.pixel_size * self.res.x / 2 / focus_distance) 
 
         camera_to_sample = mi.perspective_projection(self.res, self.res, mi.ScalarPoint2i(0), self.fov, 1e-2, 1e4)
         self.sample_to_camera = camera_to_sample.inverse()
