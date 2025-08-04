@@ -6,6 +6,13 @@ Being an experimental research framework, Dr.TVAM does not strictly follow the
 strive to document breaking API changes in the release notes below.
 
 
+Dr.TVAM 0.3.1
+-------------
+*August 4, 2025*
+- Add `telecentric` imaging system as projector `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
+- Add option to trace single pixels `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
+
+
 Dr.TVAM 0.3.0
 -------------
 *July 11, 2025*
@@ -17,8 +24,6 @@ Dr.TVAM 0.3.0
 - Some fixes for filter radon
 - Improved histogram export
 - Add double cyclindrical vials `[#37] <https://github.com/rgl-epfl/drtvam/pull/37>`_ 
-- Add `telecentric` imaging system as projector `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
-- Add option to trace single pixels `[#39] <https://github.com/rgl-epfl/drtvam/pull/39>`_
 
 Dr.TVAM 0.2.0
 -------------
