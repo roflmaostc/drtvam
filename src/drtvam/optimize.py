@@ -140,7 +140,7 @@ def optimize(config, patterns_fwd=None):
 
     patterns_key = 'projector.active_data'
 
-    if filter_radon:
+    if filter_radon and patterns_fwd is None:
         # Deactivate pixels where the Radon transform is zero
         radon_integrator = mi.load_dict({
             'type': 'radon',
@@ -163,7 +163,7 @@ def optimize(config, patterns_fwd=None):
         dr.sync_thread()
 
 
-    if 'filter_corner' in config:
+    if 'filter_corner' in config and patterns_fwd is None:
         corner_integrator = mi.load_dict({
             'type': 'corner',
             'regular_sampling': True,
