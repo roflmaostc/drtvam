@@ -215,8 +215,7 @@ It requires the following additional parameters:
 
     * - ``pixel_size``
       - ``float`` or ``mi.Point2f``
-      - The size of a pixel in the image plane, in scene units. Specifying a
-        single float will set the same size for both dimensions.
+      - The size of a pixel in the image plane, in scene units.
 
     * - ``aperture_radius``
       - ``float``
@@ -290,8 +289,7 @@ Alternatively, the configuration file can be specified by the pixel size in the 
 
     * - ``pixel_size``
       - ``float``
-      - The size of a pixel in the image plane, in scene units. Specifying a
-        single float will set the same size for both dimensions. 
+      - The size of a pixel in the image plane, in scene units. 
 
     * - ``aperture_radius``
       - ``float``
