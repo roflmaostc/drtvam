@@ -278,6 +278,45 @@ requires the following additional parameters.
       - ``float``
       - The distance from the projector to the focal plane, in scene units.
 
+Alternatively, the configuration file can be specified by the pixel size in the object space:
+
+.. list-table::
+    :widths: 10 10 80
+    :header-rows: 1
+
+    * - Key
+      - Type
+      - Description
+
+    * - ``pixel_size``
+      - ``float``
+      - The size of a pixel in the image plane, in scene units. Specifying a
+        single float will set the same size for both dimensions. 
+
+    * - ``aperture_radius``
+      - ``float``
+      - The radius of the aperture, in scene units.
+
+    * - ``focus_distance``
+      - ``float``
+      - The distance from the projector to the focal plane, in scene units.
+
+
+As the lens projector is unintuitive to use, a schematic representation of the light rays is provided here:
+
+.. image:: ../resources/setup_lens_rays.png
+  :width: 600
+
+Pixel size and field of view are directly related, and the following equation holds:
+
+.. math::
+
+    \text{pixel_size} \cdot \text{resx} = \tan\left(\frac{\text{fov}}{2}\right) \cdot 2 \cdot \text{focus_distance}
+
+where ``resx`` is the horizontal resolution of the projector, ``fov`` is the field of view in degrees, and ``focus_distance`` is the distance from the projector to the focal plane.
+
+See :ref:`projector_calibration` for more information on how to calibrate the ``lens`` projector.
+
 
 Example
 """""""
@@ -300,11 +339,23 @@ Example usage within `config.json`:
 
 In this case the chief rays are not parallel to each other. This system is best calibrated with experimental capture of the patterns (from the side or above).
 
-As the lens projector is unintuitive to use, a schematic representation of the light rays is provided here:
 
-.. image:: ../resources/setup_lens_rays.png
-  :width: 600
+Alternatively, similar to before the configuration file can be also specified by the 
+object space pixel size:
 
+.. code-block:: json
 
-See :ref:`projector_calibration` for more information on how to calibrate the ``lens`` projector.
+    "projector": {
+        "type": "lens",
+        "n_patterns": 1,
+        "resx": 740,
+        "resy": 700,
+        "pixel_size": 0.019756,
+        "aperture_radius": 4.0,
+        "focus_distance": 150.0,
+        "motion": "circular",
+        "distance": 150
+    },
+
+In this case it holds that ``pixel_size * resx == tan(fov / 2) * 2 * focus_distance``.
 
