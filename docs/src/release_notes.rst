@@ -6,6 +6,11 @@ Being an experimental research framework, Dr.TVAM does not strictly follow the
 strive to document breaking API changes in the release notes below.
 
 
+Dr.TVAM 0.3.2
+-------------
+*August 5, 2025*
+- Introduce forward mode to just project patterns instead of optimizing [#46] <https://github.com/rgl-epfl/drtvam/pull/46>`_. For example: `drtvam new_conditions/config.json --forward_mode --patterns old_conditions/patterns.npz`
+
 Dr.TVAM 0.3.1
 -------------
 *August 4, 2025*
