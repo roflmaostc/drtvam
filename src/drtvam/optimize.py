@@ -399,8 +399,8 @@ def main():
     parser.add_argument("-D", dest="overrides", metavar="key=value", action=OverrideAction, help="Override/Add a parameter in the configuration dictionary. Nested keys are separated by dots.")
     parser.add_argument("--backend", type=str, default="cuda", choices=["cuda", "llvm"], help="Select the backend for the optimization.")
     parser.add_argument("--forward_mode", action="store_true", help="Just project the patterns without optimization.\
-                        First argument must be a configuration file, second argument must be a pattern file (a *.npy).")
-    parser.add_argument("--patterns", type=str, help="Path to the patterns file (a *.npz file). This is only used in forward mode.")
+                        Patterns need to be specified by --patterns (a .npz file).")
+    parser.add_argument("--patterns", type=str, help="Path to the patterns file (a .npz file). This is only used in forward mode.")
 
     args = parser.parse_args()
 
