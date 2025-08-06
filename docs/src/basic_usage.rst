@@ -118,7 +118,7 @@ Other entries are optional:
        - How many light paths are drawn per projector pixel in the
          backpropagation of the model. Defaults to ``spp``.
 
-    *  - ``spp_grad``
+    *  - ``spp_ref``
        - ``int``
        - How many light paths are drawn per projector pixel when evaluating the
          final results. Defaults to 16.
@@ -129,10 +129,18 @@ Other entries are optional:
          ending a path. For purely absorptive media, a value of 3 is often
          sufficient. Defaults to 6.
 
+    *  - ``max_depth_ref``
+       - ``int``
+       - Same as ``max_depth`` but for final rendering
+
     *  - ``rr_depth``
        - ``int``
        - Light paths can be ended stochastically using "Russian Roulette" after
          this depth. Defaults to 6, i.e. it is disabled by default.
+
+    *  - ``rr_depth_ref``
+       - ``int``
+       - Same as ``rr_depth`` but for final rendering
 
     *  - ``time``
        - ``float``

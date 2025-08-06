@@ -14,13 +14,15 @@
         }
     },
     "projector": {
-        "type": "collimated",
+        "type": "lens",
         "n_patterns": 200,
         "resx": 200,
         "resy": 20,
         "pixel_size": 50e-3,
+        "aperture_radius": 0.001,
         "motion": "circular",
-        "distance": 20
+        "distance": 20,
+        "focus_distance": 20
     },
     "sensor": {
         "type": "dda",
