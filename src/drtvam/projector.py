@@ -251,10 +251,12 @@ class LensProjector(TVAMProjector):
         # two different conventions both can be used
         if 'fov' in props:
             self.fov = props['fov']
-            print(self.fov)
+            # pixel_size * N_x = tan(fov / 2) * 2 * focus_distance
+            self.pixel_size = dr.tan(dr.deg2rad(self.fov) / 2) * 2 * self.focus_distance / self.res.x
 
         if 'pixel_size' in props:
             pixel_size = props['pixel_size']
+            self.pixel_size = pixel_size
             # it holds that:
             # pixel_size * N_x = tan(fov / 2) * 2 * focus_distance
             self.fov = dr.rad2deg(2 * dr.atan(pixel_size * self.res.x / 2 / self.focus_distance))
@@ -279,7 +281,9 @@ class LensProjector(TVAMProjector):
         focus_p = near_p * (self.focus_distance / near_p.z)
         direction = dr.normalize(focus_p - origin)
 
-        return origin, direction, dr.pi * self.area
+        active_area = self.pixel_size * self.pixel_size * len(self.active_data)
+
+        return origin, direction, active_area
 
     def to_string(self):
         return ('LensProjector[\n'
