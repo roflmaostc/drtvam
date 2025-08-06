@@ -8,13 +8,8 @@ strive to document breaking API changes in the release notes below.
 Dr. TVAM 0.4.0
 --------------
 * August 6, 2025
-- Change the intensity normalization of lens projector `[#47] <https://github.com/rgl-epfl/drtvam/pull/47>`. It uses now the same normalization as the telecentric and collimated projectors.
-
-
-Dr.TVAM 0.3.2
--------------
-*August 5, 2025*
-- Introduce forward mode to just project patterns instead of optimizing [#46] <https://github.com/rgl-epfl/drtvam/pull/46>`_. For example: `drtvam new_conditions/config.json --forward_mode --patterns old_conditions/patterns.npz`
+- Change the intensity normalization of lens projector `[#47] <https://github.com/rgl-epfl/drtvam/pull/47>`_. It uses now the same normalization as the telecentric and collimated projectors.
+- Introduce forward mode to just project patterns instead of optimizing `[#46] <https://github.com/rgl-epfl/drtvam/pull/46>`_. For example: ``drtvam new_conditions/config.json --forward_mode --patterns old_conditions/patterns.npz`
 
 Dr.TVAM 0.3.1
 -------------
