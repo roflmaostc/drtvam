@@ -244,7 +244,7 @@ Example usage within `config.json`:
         "focus_distance": 150.0
     },
 
-In thise case the chief rays are parallel to each other and have a numerical aperture of 0.0667. 
+In this case the chief rays are parallel to each other and have a numerical aperture of 0.0667. 
 It is identical to the example for the collimated projector, except the 
 ``aperture_radius`` and ``focus_distance`` parameters are added to model the cone of light rays.
 If you use such a projector with a non-zero aperture radius, you need to sample more rays per pixel (to capture the effect of the defocus blur).
