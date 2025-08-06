@@ -91,7 +91,7 @@ We specify the optimization parameters with a JSON file. Below is an example of 
                 "type": "vfilm",
                 "resx": 256,
                 "resy": 256,
-                "resz": 256,
+                "resz": 256
             }
         },
         "target": {

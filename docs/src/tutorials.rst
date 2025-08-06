@@ -14,3 +14,4 @@ tutorials:
     tuts/02 - Optimizing
     real_world_example.rst 
     projector_calibration.rst 
+    forward_projection.rst 
