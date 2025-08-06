@@ -78,7 +78,14 @@ def load_scene(config):
 
     return scene_dict
 
-def optimize(config):
+def optimize(config, patterns_fwd=None):
+    """
+
+    Optimize the patterns for the TVAM.
+    Args:
+        config (dict): Configuration dictionary containing the scene and optimization parameters.
+        patterns_fwd (np.ndarray, optional): if provided, the actual optimization is skipped
+    """
     scene_dict = load_scene(config)
     scene = mi.load_dict(scene_dict)
     params = mi.traverse(scene)
@@ -133,7 +140,7 @@ def optimize(config):
 
     patterns_key = 'projector.active_data'
 
-    if filter_radon:
+    if filter_radon and patterns_fwd is None:
         # Deactivate pixels where the Radon transform is zero
         radon_integrator = mi.load_dict({
             'type': 'radon',
@@ -156,7 +163,7 @@ def optimize(config):
         dr.sync_thread()
 
 
-    if 'filter_corner' in config:
+    if 'filter_corner' in config and patterns_fwd is None:
         corner_integrator = mi.load_dict({
             'type': 'corner',
             'regular_sampling': True,
@@ -230,9 +237,12 @@ def optimize(config):
         'print_time': time
     })
 
+    if patterns_fwd is not None:
+        print("Using provided patterns for forward mode.")
+        params['projector.active_data'] = patterns_fwd.flatten()
+        params.update()
 
-
-    if "psf_analysis" in config:
+    elif "psf_analysis" in config:
         print("\nPSF analysis enabled.")
         print("Exporting ray tracing...")
         # we simply loop over the entries specified in the json
@@ -357,6 +367,9 @@ def optimize(config):
 
     return vol_final
 
+
+
+
 class OverrideAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
@@ -385,6 +398,10 @@ def main():
     parser.add_argument("config", type=str, help="Path to the configuration file")
     parser.add_argument("-D", dest="overrides", metavar="key=value", action=OverrideAction, help="Override/Add a parameter in the configuration dictionary. Nested keys are separated by dots.")
     parser.add_argument("--backend", type=str, default="cuda", choices=["cuda", "llvm"], help="Select the backend for the optimization.")
+    parser.add_argument("--forward_mode", action="store_true", help="Just project the patterns without optimization.\
+                        Patterns need to be specified by --patterns (a .npz file).")
+    parser.add_argument("--patterns", type=str, help="Path to the patterns file (a .npz file). This is only used in forward mode.")
+
     args = parser.parse_args()
 
     mi.set_variant(f"{args.backend}_ad_mono")
@@ -413,8 +430,16 @@ def main():
     with open(os.path.join(config['output'], "opt_config.json"), 'w') as f:
         json.dump(config, f, indent=4)
 
-    # Run the optimization
-    optimize(config)
+    if args.forward_mode:
+        # Forward mode: just project the patterns
+        if 'patterns' not in args:
+            raise ValueError("In forward mode, you must specify the patterns file.")
+        patterns = np.load(args.patterns)['patterns']
+        optimize(config, patterns_fwd=patterns)
+    else:
+        # Run the optimization
+        optimize(config)
+
 
 if __name__ == "__main__":
     main()
